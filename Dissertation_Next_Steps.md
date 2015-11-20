@@ -69,9 +69,20 @@ using the appropriate locations and data on CUNY computers. The problem is that
 I am still at 126k. I need to get down to the 125k indicated in the 
 dissertation.
 
+Ahh. I think I may be able to get to the right number without the original 
+syntax. If we drop those who pursued a certificate as their last degree, we get
+rid of 454 more (leaving 125,178). It's important to note here that the last
+degree variable I used to drop these students () is not the same as the original
+version of the variable. It excludes those who transferred to a 2 or 4 year 
+college in the NSC data (there are 49 of these students). 
 
+If we then exclude the Native American students (203), we get to the N presented
+in the dissertation: 125,515. 
 
-That gets me down to 125,969.
+Note that I saved this in Stata13 and ran into issues reading it into R. I used 
+saveold to save it as a Stata12 file, opened it up in Stata11 and saveold'ed it
+to Stata9. The name of the file is now 20151120_PTC_Stata9.dta. 
+
 
 ### Catalogue all analyses and find underlying syntax
 

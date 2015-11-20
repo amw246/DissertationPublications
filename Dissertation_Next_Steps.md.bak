@@ -12,7 +12,7 @@ My dissertation consisted of five chapters:
 4. Graduation
 5. Conclustion
 
-Of the chapters, the three middles ones represent the best chance of publication
+Of the chapters, the three middle ones represent the best chance of publication
 in journals or on the web. Ideally, I'd like something that could be published 
 in a reasonable journal as well as put on the internet using knitR or some such
 tool. 
@@ -69,9 +69,18 @@ using the appropriate locations and data on CUNY computers. The problem is that
 I am still at 126k. I need to get down to the 125k indicated in the 
 dissertation.
 
+Ahh. I think I may be able to get to the right number without the original 
+syntax. If we drop those who pursued a certificate as their last degree, we get
+rid of 454 more (leaving 125,178). It's important to note here that the last
+degree variable I used to drop these students () is not the same as the original
+version of the variable. It excludes those who transferred to a 2 or 4 year 
+college in the NSC data (there are 49 of these students). 
+
+If we then exclude the Native American students (203), we get to the N presented
+in the dissertation: 125,515. 
 
 
-That gets me down to 125,969.
+
 
 ### Catalogue all analyses and find underlying syntax
 

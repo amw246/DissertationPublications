@@ -171,7 +171,11 @@ order r_ftptcode_sem1 r_ftptcode_sem2 r_ftptcode_sem3 r_ftptcode_sem4 r_ftptcode
 
 *save as single data set
 
-save "C:\Users\awallace\Desktop\Andrew's Files\Dissertation\20131203_PTC.dta"
+drop if degree_pursued_level_code == 1
+drop if last_deg_pursued_R == 1
+drop if ethnicity_imputed_code == 6
+
+save "C:\Users\awallace\Desktop\Andrew's Files\Dissertation\20151120_PTC.dta"
 
 
 
