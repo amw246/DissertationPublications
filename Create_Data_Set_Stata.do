@@ -175,7 +175,7 @@ drop if degree_pursued_level_code == 1
 drop if last_deg_pursued_R == 1
 drop if ethnicity_imputed_code == 6
 
-save "C:\Users\awallace\Desktop\Andrew's Files\Dissertation\20151120_PTC.dta"
+saveold "C:\Users\awallace\Desktop\Andrew's Files\Dissertation\20151120_PTC_Stata12.dta"
 
 
 

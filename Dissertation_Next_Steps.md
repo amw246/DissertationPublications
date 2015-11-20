@@ -83,6 +83,20 @@ Note that I saved this in Stata13 and ran into issues reading it into R. I used
 saveold to save it as a Stata12 file, opened it up in Stata11 and saveold'ed it
 to Stata9. The name of the file is now 20151120_PTC_Stata9.dta. 
 
+Now, having backed into the original number and read it into R, I would like to 
+compare some descriptives to what I get in Stata to make sure there aren't any
+differences. 
+
+Variables to describe:
+entry.date
+
+Hmm. Is there a way to automate this? I can either look at the models to pick 
+out certain variables to compare or compare all 87 variables in the data set. 
+I also need to make sure eventually that I didn't add any variables later to 
+the analysis that aren't in the data set currently. 
+
+
+
 
 ### Catalogue all analyses and find underlying syntax
 
