@@ -17,14 +17,24 @@ myvars <- c("ftptcode.sem01","ftptcode.sem02","ftptcode.sem03","ftptcode.sem04",
             "grad.sem03","grad.sem04","grad.sem05","grad.sem06","grad.sem07",
             "grad.sem08","grad.sem09","grad.sem10","grad.sem11","grad.sem12", 
             "grad.sem13","grad.sem14","grad.sem15","grad.sem16","grad.sem17",
-            "grad.sem18","grad.sem19","grad.sem20","college.id.semR2", 
-            "college.id.semR3","college.id.semR4","college.id.semR5",
-            "college.id.semR6","college.id.semR7","college.id.semR8",
-            "college.id.semR9","college.id.semR10","college.id.semR11",
-            "college.id.semR12","college.id.semR13","college.id.semR14",
-            "college.id.semR15","college.id.semR17","college.id.semR18",
-            "college.id.semR19","college.id.semR20"
-            
+            "grad.sem18","grad.sem19","grad.sem20",
+            "college.id.semR2","college.id.semR3","college.id.semR4",
+            "college.id.semR5","college.id.semR6","college.id.semR7",
+            "college.id.semR8","college.id.semR9","college.id.semR10",
+            "college.id.semR11","college.id.semR12","college.id.semR13",
+            "college.id.semR14","college.id.semR15","college.id.semR17",
+            "college.id.semR18","college.id.semR19","college.id.semR20",
+            "pell.awd.fy01","ever.transferred", "transferred.out",
+            "degree.pursued.lvl.code.sem02","degree.pursued.lvl.code.sem03",
+            "degree.pursued.lvl.code.sem04","degree.pursued.lvl.code.sem05",
+            "degree.pursued.lvl.code.sem06","degree.pursued.lvl.code.sem07",
+            "degree.pursued.lvl.code.sem08","degree.pursued.lvl.code.sem09",
+            "degree.pursued.lvl.code.sem10","degree.pursued.lvl.code.sem11",
+            "degree.pursued.lvl.code.sem12","degree.pursued.lvl.code.sem13",
+            "degree.pursued.lvl.code.sem14","degree.pursued.lvl.code.sem15",
+            "degree.pursued.lvl.code.sem16","degree.pursued.lvl.code.sem17",
+            "degree.pursued.lvl.code.sem18","degree.pursued.lvl.code.sem19",
+            "degree.pursued.lvl.code.sem20"
           )
 PTC1 <- PTC1[myvars]
 
@@ -65,136 +75,64 @@ PTC <- merge(PTC,FTPT,by="oira.student.id")
 
 
 
-x <- PTC[,which(colnames(PTC)=="r.ftptcode.sem1": which(colnames(PTC)=="r.ftptcode.sem1"]
+
+# Flag spring entrants
+spring.terms <- as.Date(c('2000-02-01', '2001-02-01', '2002-02-01'), "%Y-%m-%d")
+
+PTC$spring <- ifelse(PTC$entry.date %in% spring.terms, c("Spring"), c("Fall"))
+table(PTC$spring)
+PTC$spring <- as.factor(PTC$spring)
+
+# Flag pell recipients
+PTC$pell.awd.fy01[is.na(PTC$pell.awd.fy01)] <- 0 # recode Null to 0
+PTC$pell <- ifelse(PTC$pell.awd.fy01 > 0, c("Pell"), c("No Pell"))
+PTC$pell <- as.factor(PTC$pell)
+table(PTC$pell)
+
+# Find the last degree pursued
+#the 1st sem variable is differently named and in a different location than the others
+deg.pursued1 <- names(PTC)[which(colnames(PTC)=="degree.pursued.level.code")] 
+deg.pursued2 <- names(PTC)[which(colnames(PTC)=="degree.pursued.lvl.code.sem02"):
+                            which(colnames(PTC)=="degree.pursued.lvl.code.sem20")]
+deg.pursued <- c(deg.pursued1, deg.pursued2)
 
 
+lastValue <- function(x) tail(x[!is.na(x)],1)
+PTC$last.deg.pursued <- apply(PTC[deg.pursued], 1, lastValue)
 
-##Need to figure out how to iterate through these variables as I do in Stata. 
-#Something like the lapply below may be the trick. But it makes each A1 A2 var
-#once. I need something that will go back over them an replace ONLY the appropriate
-#cases. 
+NSC <- read.dta("/Volumes/untitled/20131120_NSC_Wide.dta",
+                convert.factors = FALSE, convert.underscore = TRUE)
+NSC.keeplist <- grep("year4year", colnames(NSC))
+#holy crap grep is useful here! Saved a hundred lines of code
+#We also want the oira id, so add column 1 to the keeplist
+NSC.keeplist <- c(1, NSC.keeplist)
 
+NSC <- NSC[NSC.keeplist]
 
-ftpt.list <- names(PTC)[which(colnames(PTC)=="ftptcode.sem01"):
-                          which(colnames(PTC)=="ftptcode.sem20") ]
-# r.ftpt.list <- paste("r", ftpt.list, sep = ".")
-r.ftpt.list <- names(PTC)[which(colnames(PTC)=="r.ftptcode.sem1"):
-  which(colnames(PTC)=="r.ftptcode.sem20")] 
-grad.list <- names(PTC)[which(colnames(PTC)=="grad.sem01"):
-                          which(colnames(PTC)=="grad.sem20")]
+#missingness is "" here which the lastValue function can't deal with so we recode
+NSC[NSC == ""] <- NA
+# there are also odd "L" values here
+NSC[NSC == "L"] <- NA
+#The apply in lastValue doesn't seem to like it if there is no initial value, 
+# so I'm bringing in their last deg pursued from the PTC. I need to be careful not to 
+# overwrite later in-CUNY changes with this . 
+PTC.Level <- PTC[,c("oira.student.id", "last.deg.pursued")]
+NSC <- merge(PTC.Level, NSC , by="oira.student.id")
+NSC$trans.last.college.level <- apply(NSC[, 2:103], 1, lastValue)
+#recode 4 (i.e. 4 year) to 3 (i.e. BA)
+NSC$trans.last.college.level[NSC$trans.last.college.level == 4] <- 3
+NSC$trans.last.college.level <- as.factor(NSC$trans.last.college.level)
+table(NSC$trans.last.college.level)
 
-############THe numbers in table(PTC$degree.earned.level.code.sem2) aren't what i
-#get in Stata
+# 1     2     3 
+# 146 34104 24451 
 
-PTC$degree.earned.level.code.sem1 <- NA
-#unfortunately there are the desc versions interspersed so a simple 2:20 doesn't work
-deg.list <- names(PTC)[c(which(colnames(PTC)=="degree.earned.level.code.sem1"),
-                         which(colnames(PTC)=="degree.earned.level.code.sem2"),
-                         which(colnames(PTC)=="degree.earned.level.code.sem3"),
-                         which(colnames(PTC)=="degree.earned.level.code.sem4"),
-                         which(colnames(PTC)=="degree.earned.level.code.sem5"),
-                         which(colnames(PTC)=="degree.earned.level.code.sem6"),
-                         which(colnames(PTC)=="degree.earned.level.code.sem7"),
-                         which(colnames(PTC)=="degree.earned.level.code.sem8"),
-                         which(colnames(PTC)=="degree.earned.level.code.sem9"),
-                         which(colnames(PTC)=="degree.earned.level.code.sem10"),
-                         which(colnames(PTC)=="degree.earned.level.code.sem11"),
-                         which(colnames(PTC)=="degree.earned.level.code.sem12"),
-                         which(colnames(PTC)=="degree.earned.level.code.sem13"),
-                         which(colnames(PTC)=="degree.earned.level.code.sem14"),
-                         which(colnames(PTC)=="degree.earned.level.code.sem15"),
-                         which(colnames(PTC)=="degree.earned.level.code.sem16"),
-                         which(colnames(PTC)=="degree.earned.level.code.sem17"),
-                         which(colnames(PTC)=="degree.earned.level.code.sem18"),
-                         which(colnames(PTC)=="degree.earned.level.code.sem19"),
-                          which(colnames(PTC)=="degree.earned.level.code.sem20"))]
+# The inclusion of certificates isn't surprising given they haven't been dropped yet
+# however these numbers are bigger than those in Stata which I think exclude non-trans
+# students. Do more work to reconcile these numbers. 
 
+PTCa <- merge(PTC, NSC, all.x = TRUE)
 
-#I didnt' create a 1st sem version of this in Stata but for the function below, I
-#will need it. 
-PTC$college.id.semR1 <- PTC$college.id
-college.list <- names(PTC)[c(which(colnames(PTC)=="college.id.semR1"),
-                             which(colnames(PTC)=="college.id.semR2"):
-                               which(colnames(PTC)=="college.id.semR20"))]
-
-#Create a list of tuples of the two variables to be used in the conditions
-tup.list <- mapply(list, ftpt.list, grad.list, SIMPLIFY=FALSE)
-
-# w = college.list, x = ftpt.list, y = grad.list, z = deg.list, a = r.ftpt.list
-state.recoding<-  function(w,x,y,z){
-  if(x == 1 & y == 0) { #full-time
-    return(1)
-  }else if(x == 2 & y == 0) { #part-time
-    return(2)
-  }else  if(z == 1) { #Cert
-    return(5)
-  }else  if(z == 2) { #AA
-    return(6)
-  }else  if(z == 3) { #BA
-    return(7)
-  }else  if(w > 30) { #Trans
-    return(4)  
-  }else   return(3) #stop out
-}
-
-test.function <- function(x) {
-  table(x)
-}
-attach(PTC)
-sapply(PTC[ftpt.list], test.function)
-
-
-
-
-PTC[r.ftpt.list] <- mapply(state.recoding,
-       college.list, ftpt.list, grad.list, deg.list)
-
-
-
-#still need a way to back fill transfer and not enrolled post grad
-
-x1 <- 0:2
-x2 <- c(1, 11, 111)
-
-mapply(function(x, y)
-print(paste(x,y,sep=" "))
-,
-ftpt.list, grad.list)
-
-PTC[r.ftpt.list] <- 
-  lapply(PTC[tup.list]), 
-    function(x,y) {
-      if(x==1 & y==0){
-        
-      }
-      
-    }
-    , x = tup.list[1], y = tup.list[2]
-   
-
-for(i in 1:20){
-  r.ftptcode.semi <-3 
-  
-  A <- lapply (1 : 10, function (x) d + rnorm (3)) ?
-  
-}
-
-}
-
-# foreach i of numlist 2/20 {
-# replace r_ftptcode_sem`i'=4 if college_id_semR`i'>30 & college_id_semR`i'!=. //t
-# }
-# 
-# foreach i of numlist 20/3 {
-# local j = `i' - 1
-#   while `j' >=2 {
-# 		replace r_ftptcode_sem`i' = 8 if  r_ftptcode_sem`i'== 3 & inlist(r_ftptcode_sem`j',5, 6,7) //post-grad
-# 		replace r_ftptcode_sem`i' = 4 if  r_ftptcode_sem`i'== 3 & r_ftptcode_sem`j'==4 & transferred_out==1 //transfer
-# 		local j = `j' - 1
-# }
-# }
-#   
-# }
 
 
 
@@ -202,24 +140,44 @@ for(i in 1:20){
 PTC <- PTC[ which(PTC$degree.pursued.level.code > 1), ]
 
 
-#Need to calculate these:   
-# "ever.transferred","transferred.out",,"spring","pell"
-# spring                  
-# pell                
-# pattern                        
-# last.degree.pursued                  
-# trans.last.college.level 
-# last.deg.pursued
+#Need to calculate these:                                        
+# trans.last.college.level  to get to this I went back to the NSC data, hmm 
 # last.deg.pursued.R              
 # group     
+#delayed.grad
 
 #create the pattern variable (don't know if still necessary)
+r.ftpt.list <- names(PTC)[which(colnames(PTC)=="r.ftptcode.sem1"):
+                            which(colnames(PTC)=="r.ftptcode.sem20")] 
 PTC$pattern <- apply(PTC[,r.ftpt.list],1, paste, collapse = "")
 
 
 #descriptives
+PTC$ethnicity.imputed.code <- factor(PTC$ethnicity.imputed.code)
+PTC$degree.pursued.level.code <- factor(PTC$degree.pursued.level.code, levels = c(3,2))
+#set the appropriate comparison group for degree
+
+PTC$female <- factor(PTC$female)
 
 eth <- table(PTC$ethnicity.imputed.code)
 gender <- table(PTC$female)
 college <- table(PTC$college.id)
 term <- table(entry.date)
+deg <- table(PTC$degree.pursued.level.code)
+
+#a quick test of probits
+#ba.150 was read in as an integer
+#convert it to a factor
+PTC$ba.150 <- factor(PTC$ba.150)
+
+myprobit <- glm(ba.150 ~ ethnicity.imputed.code + degree.pursued.level.code + female, family=binomial(link="probit"), data=PTC)
+
+## model summary
+summary(myprobit)
+
+#well, it runs. 
+a = matrix(c(2, 3, NA,1, NA, 1,2, 12, 19), nrow = 3, ncol = 3, byrow = TRUE)
+df = data.frame(a) 
+lastValue <- function(x) tail(x[!is.na(x)],1)
+
+df$X4 <- apply(df[,1:],1,lastValue)
