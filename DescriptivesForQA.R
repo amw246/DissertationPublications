@@ -180,4 +180,3 @@ a = matrix(c(2, 3, NA,1, NA, 1,2, 12, 19), nrow = 3, ncol = 3, byrow = TRUE)
 df = data.frame(a) 
 lastValue <- function(x) tail(x[!is.na(x)],1)
 
-df$X4 <- apply(df[,1:],1,lastValue)
