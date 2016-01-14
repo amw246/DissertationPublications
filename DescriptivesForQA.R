@@ -251,15 +251,37 @@ for (place in 1:length(deg.list)){
 # }
 
 r2.ftpt.list <- grep("^r2.ftpt",colnames(PTC))
-  
-r2.ftpt.sem20 <- ifelse(
-  (PTC$r2.ftpt.sem20 == 3 & PTC$r2.ftpt.sem19 %in% c(5,6,7)), 
-  8,PTC$r2.ftpt.sem20
-)
-r2.ftpt.sem20 <- ifelse(
-  (PTC$r2.ftpt.sem20 == 3 & PTC$r2.ftpt.sem19 == 4 & PTC$transferred.out==1), 
-  4,PTC$r2.ftpt.sem20
-)
+r2.ftpt.list.reversed <- sort(r2.ftpt.list, decreasing = TRUE)  
+
+for (place in 1:length(r2.ftpt.list.reversed )){
+  next.place <- place + 1
+  while(next.place <= length(r2.ftpt.list.reversed )){
+    PTC[,r2.ftpt.list.reversed[place]] <- ifelse(
+      (PTC[,r2.ftpt.list.reversed[place]] == 3 & PTC[,r2.ftpt.list.reversed[place+1]] %in% c(5,6,7)), 
+      8,PTC[,r2.ftpt.list.reversed[place]]
+    )
+    PTC[,r2.ftpt.list.reversed[place]] <- ifelse(
+      (PTC[,r2.ftpt.list.reversed[place]]== 3 & PTC[,r2.ftpt.list.reversed[place+1]] == 4 & PTC$transferred.out==1), 
+      4,PTC[,r2.ftpt.list.reversed[place]]
+    )
+    next.place <- next.place + 1
+  }
+}
+
+#there are 56,722 students who are still coded as 3 who should be a diff code
+#it's all in the second recode. Given the number, I wonder if it's that it only 
+#worked for the 20th sem
+
+# table(PTC$r2.ftpt.sem20)
+# 
+# 1      2      3      4      5      6      7      8 
+# 2154   3860 111417   6783      8    343    587   1020 
+# > table(PTC$r.ftptcode.sem20)
+# 
+# 1     2     3     4     5     6     7     8 
+# 2154  3860 54695 19790     8   343   587 44735 
+PTC$ftpt20.recode.diff <- ifelse(PTC$r2.ftpt.sem20 == 3 & PTC$r.ftptcode.sem20 != 3, TRUE, FALSE)
+
 
 PTC$r2.ftpt.sem20 == 3 & PTC$r2.ftpt.sem19 %in% c(5,6,7)
 
