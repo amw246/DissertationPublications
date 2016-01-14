@@ -1,3 +1,10 @@
+test2
+
+#This file will read in the data files from the institution,
+#conduct appropriate data transformation, and lay the groundwork
+#for the analysis to come. 
+
+
 library(foreign)
 PTC1 <- read.dta("/Volumes/untitled/20131125_Data_Wallace_Dissertation/20131125_Wallace_f99-s00.dta", 
                  convert.factors=FALSE, convert.underscore=TRUE)
@@ -22,9 +29,10 @@ myvars <- c("ftptcode.sem01","ftptcode.sem02","ftptcode.sem03","ftptcode.sem04",
             "college.id.semR5","college.id.semR6","college.id.semR7",
             "college.id.semR8","college.id.semR9","college.id.semR10",
             "college.id.semR11","college.id.semR12","college.id.semR13",
-            "college.id.semR14","college.id.semR15","college.id.semR17",
-            "college.id.semR18","college.id.semR19","college.id.semR20",
-            "pell.awd.fy01","ever.transferred", "transferred.out",
+            "college.id.semR14","college.id.semR15","college.id.semR16",
+            "college.id.semR17","college.id.semR18","college.id.semR19",
+            "college.id.semR20","pell.awd.fy01","ever.transferred",
+            "transferred.out",
             "degree.pursued.lvl.code.sem02","degree.pursued.lvl.code.sem03",
             "degree.pursued.lvl.code.sem04","degree.pursued.lvl.code.sem05",
             "degree.pursued.lvl.code.sem06","degree.pursued.lvl.code.sem07",
@@ -45,13 +53,13 @@ PTC2 <- PTC2[myvars]
 PTC3 <- read.dta("/Volumes/untitled/20131125_Data_Wallace_Dissertation/20131125_Wallace_f02-s04.dta", 
                convert.factors=FALSE, convert.underscore=TRUE)
 PTC3 <- PTC3[myvars]
-table(PTC3$entry.date)
+#table(PTC3$entry.date)
 # 2002-09-01 2003-02-01 2003-09-01 2004-02-01 
 # 26478       8768      27135       9020 
 
 #For dropping the later terms
 PTC3 <- PTC3[ which(PTC3$entry.date==as.Date("2002-09-01") ), ]
-table(PTC3$entry.date)
+#table(PTC3$entry.date)
 # 2002-09-01 
 # 26478 
 
@@ -68,6 +76,248 @@ FTPT <- read.dta("/Volumes/untitled/20151122_ftpt_recode.dta",
 
 PTC <- merge(PTC,FTPT,by="oira.student.id")
 
+state.recoding <- function(w, x, y, z){if(w == 1) {
+  return(5)
+} else if (w == 2) {
+  return(6)
+} else if (w == 3) {
+  return(7)
+} else if (x == 1 && y == 0){
+  return(1)
+} else if (x == 2 && y == 0){
+  return(2)
+} else if (z > 30){
+  return(4)
+} else {
+  return(3)
+}
+}
+
+#need to add degree
+PTC$degree.earned.level.code.sem1 <- 0
+#FIx this so NA becomes 0
+
+PTC[deg.list] <- 0
+deg.list <- names(PTC)[c(which(colnames(PTC)=="degree.earned.level.code.sem1"),
+                         which(colnames(PTC)=="degree.earned.level.code.sem2"),
+                         which(colnames(PTC)=="degree.earned.level.code.sem3"),
+                         which(colnames(PTC)=="degree.earned.level.code.sem4"),
+                         which(colnames(PTC)=="degree.earned.level.code.sem5"),
+                         which(colnames(PTC)=="degree.earned.level.code.sem6"),
+                         which(colnames(PTC)=="degree.earned.level.code.sem7"),
+                         which(colnames(PTC)=="degree.earned.level.code.sem8"),
+                         which(colnames(PTC)=="degree.earned.level.code.sem9"),
+                         which(colnames(PTC)=="degree.earned.level.code.sem10"),
+                         which(colnames(PTC)=="degree.earned.level.code.sem11"),
+                         which(colnames(PTC)=="degree.earned.level.code.sem12"),
+                         which(colnames(PTC)=="degree.earned.level.code.sem13"),
+                         which(colnames(PTC)=="degree.earned.level.code.sem14"),
+                         which(colnames(PTC)=="degree.earned.level.code.sem15"),
+                         which(colnames(PTC)=="degree.earned.level.code.sem16"),
+                         which(colnames(PTC)=="degree.earned.level.code.sem17"),
+                         which(colnames(PTC)=="degree.earned.level.code.sem18"),
+                         which(colnames(PTC)=="degree.earned.level.code.sem19"),
+                         which(colnames(PTC)=="degree.earned.level.code.sem20"))]
+
+col.list <- names(PTC)[c(which(colnames(PTC)=="college.id.semR2"):
+                         which(colnames(PTC)=="college.id.semR20"))]
+
+
+
+
+# PTC[deg.list] %>% replace_na(list(PTC[deg.list] = 0))
+
+
+
+ftpt.list <- names(PTC)[c(which(colnames(PTC)=="ftptcode.sem01"):
+                         which(colnames(PTC)=="ftptcode.sem20"))]
+# 
+# apply(PTC[ftpt.list], 2, null.recode)
+
+PTC$degree.earned.level.code.sem2[is.na(PTC$degree.earned.level.code.sem2)] <- 0
+PTC$ftptcode.sem02[is.na(PTC$ftptcode.sem02)] <- 0 
+PTC$college.id.semR2[is.na(PTC$college.id.semR2)] <- 0
+
+PTC$degree.earned.level.code.sem3[is.na(PTC$degree.earned.level.code.sem3)] <- 0
+PTC$ftptcode.sem03[is.na(PTC$ftptcode.sem03)] <- 0 
+PTC$college.id.semR3[is.na(PTC$college.id.semR3)] <- 0
+
+PTC$degree.earned.level.code.sem4[is.na(PTC$degree.earned.level.code.sem4)] <- 0
+PTC$ftptcode.sem04[is.na(PTC$ftptcode.sem04)] <- 0 
+PTC$college.id.semR4[is.na(PTC$college.id.semR4)] <- 0
+
+PTC$degree.earned.level.code.sem5[is.na(PTC$degree.earned.level.code.sem5)] <- 0
+PTC$ftptcode.sem05[is.na(PTC$ftptcode.sem05)] <- 0 
+PTC$college.id.semR5[is.na(PTC$college.id.semR5)] <- 0
+
+PTC$degree.earned.level.code.sem6[is.na(PTC$degree.earned.level.code.sem6)] <- 0
+PTC$ftptcode.sem06[is.na(PTC$ftptcode.sem06)] <- 0 
+PTC$college.id.semR6[is.na(PTC$college.id.semR6)] <- 0
+
+PTC$degree.earned.level.code.sem7[is.na(PTC$degree.earned.level.code.sem7)] <- 0
+PTC$ftptcode.sem07[is.na(PTC$ftptcode.sem07)] <- 0 
+PTC$college.id.semR7[is.na(PTC$college.id.semR7)] <- 0
+
+PTC$degree.earned.level.code.sem8[is.na(PTC$degree.earned.level.code.sem8)] <- 0
+PTC$ftptcode.sem08[is.na(PTC$ftptcode.sem08)] <- 0 
+PTC$college.id.semR8[is.na(PTC$college.id.semR8)] <- 0
+
+PTC$degree.earned.level.code.sem9[is.na(PTC$degree.earned.level.code.sem9)] <- 0
+PTC$ftptcode.sem09[is.na(PTC$ftptcode.sem09)] <- 0 
+PTC$college.id.semR9[is.na(PTC$college.id.semR9)] <- 0
+
+PTC$degree.earned.level.code.sem10[is.na(PTC$degree.earned.level.code.sem10)] <- 0
+PTC$ftptcode.sem10[is.na(PTC$ftptcode.sem10)] <- 0 
+PTC$college.id.semR10[is.na(PTC$college.id.semR10)] <- 0
+
+PTC$degree.earned.level.code.sem11[is.na(PTC$degree.earned.level.code.sem11)] <- 0
+PTC$ftptcode.sem11[is.na(PTC$ftptcode.sem11)] <- 0 
+PTC$college.id.semR11[is.na(PTC$college.id.semR11)] <- 0
+
+PTC$degree.earned.level.code.sem12[is.na(PTC$degree.earned.level.code.sem12)] <- 0
+PTC$ftptcode.sem12[is.na(PTC$ftptcode.sem12)] <- 0 
+PTC$college.id.semR12[is.na(PTC$college.id.semR12)] <- 0
+
+PTC$degree.earned.level.code.sem13[is.na(PTC$degree.earned.level.code.sem13)] <- 0
+PTC$ftptcode.sem13[is.na(PTC$ftptcode.sem13)] <- 0 
+PTC$college.id.semR13[is.na(PTC$college.id.semR13)] <- 0
+
+PTC$degree.earned.level.code.sem14[is.na(PTC$degree.earned.level.code.sem14)] <- 0
+PTC$ftptcode.sem14[is.na(PTC$ftptcode.sem14)] <- 0 
+PTC$college.id.semR14[is.na(PTC$college.id.semR14)] <- 0
+
+PTC$degree.earned.level.code.sem15[is.na(PTC$degree.earned.level.code.sem15)] <- 0
+PTC$ftptcode.sem15[is.na(PTC$ftptcode.sem15)] <- 0 
+PTC$college.id.semR15[is.na(PTC$college.id.semR15)] <- 0
+
+PTC$degree.earned.level.code.sem16[is.na(PTC$degree.earned.level.code.sem16)] <- 0
+PTC$ftptcode.sem16[is.na(PTC$ftptcode.sem16)] <- 0 
+PTC$college.id.semR16[is.na(PTC$college.id.semR16)] <- 0
+
+PTC$degree.earned.level.code.sem17[is.na(PTC$degree.earned.level.code.sem17)] <- 0
+PTC$ftptcode.sem17[is.na(PTC$ftptcode.sem17)] <- 0 
+PTC$college.id.semR17[is.na(PTC$college.id.semR17)] <- 0
+
+PTC$degree.earned.level.code.sem18[is.na(PTC$degree.earned.level.code.sem18)] <- 0
+PTC$ftptcode.sem18[is.na(PTC$ftptcode.sem18)] <- 0 
+PTC$college.id.semR18[is.na(PTC$college.id.semR18)] <- 0
+
+PTC$degree.earned.level.code.sem19[is.na(PTC$degree.earned.level.code.sem19)] <- 0
+PTC$ftptcode.sem19[is.na(PTC$ftptcode.sem19)] <- 0 
+PTC$college.id.semR19[is.na(PTC$college.id.semR19)] <- 0
+
+PTC$degree.earned.level.code.sem20[is.na(PTC$degree.earned.level.code.sem20)] <- 0
+PTC$ftptcode.sem20[is.na(PTC$ftptcode.sem20)] <- 0 
+PTC$college.id.semR20[is.na(PTC$college.id.semR20)] <- 0
+
+
+# null.recode <- function(x){
+#   PTC$x[is.na(PTC$x)] <- 0
+# }
+# null.recode(degree.earned.level.code.sem2)
+
+
+PTC$r2.ftpt.sem1 <- mapply(state.recoding, 
+                         w = PTC$degree.earned.level.code.sem1, 
+                         x = PTC$ftptcode.sem01, 
+                         y = PTC$grad.sem01,
+                         z = PTC$college.id)
+PTC$r2.ftpt.sem2 <- mapply(state.recoding, 
+                         w = PTC$degree.earned.level.code.sem2, 
+                         x = PTC$ftptcode.sem02, 
+                         y = PTC$grad.sem02,
+                         z = PTC$college.id.semR2)
+PTC$r2.ftpt.sem3 <- mapply(state.recoding, 
+                         w = PTC$degree.earned.level.code.sem3, 
+                         x = PTC$ftptcode.sem03, 
+                         y = PTC$grad.sem03,
+                         z = PTC$college.id.semR3)
+PTC$r2.ftpt.sem4 <- mapply(state.recoding, 
+                          w = PTC$degree.earned.level.code.sem4, 
+                          x = PTC$ftptcode.sem04, 
+                          y = PTC$grad.sem04,
+                          z = PTC$college.id.semR4)
+PTC$r2.ftpt.sem5 <- mapply(state.recoding, 
+                          w = PTC$degree.earned.level.code.sem5, 
+                          x = PTC$ftptcode.sem05, 
+                          y = PTC$grad.sem05,
+                          z = PTC$college.id.semR5)
+PTC$r2.ftpt.sem6 <- mapply(state.recoding, 
+                          w = PTC$degree.earned.level.code.sem6, 
+                          x = PTC$ftptcode.sem06, 
+                          y = PTC$grad.sem06,
+                          z = PTC$college.id.semR6)
+PTC$r2.ftpt.sem7 <- mapply(state.recoding, 
+                          w = PTC$degree.earned.level.code.sem7, 
+                          x = PTC$ftptcode.sem07, 
+                          y = PTC$grad.sem07,
+                          z = PTC$college.id.semR7)
+PTC$r2.ftpt.sem8 <- mapply(state.recoding, 
+                          w = PTC$degree.earned.level.code.sem8, 
+                          x = PTC$ftptcode.sem08, 
+                          y = PTC$grad.sem08,
+                          z = PTC$college.id.semR8)
+PTC$r2.ftpt.sem9 <- mapply(state.recoding, 
+                          w = PTC$degree.earned.level.code.sem9, 
+                          x = PTC$ftptcode.sem09, 
+                          y = PTC$grad.sem09,
+                          z = PTC$college.id.semR9)
+PTC$r2.ftpt.sem10 <- mapply(state.recoding, 
+                          w = PTC$degree.earned.level.code.sem10, 
+                          x = PTC$ftptcode.sem10, 
+                          y = PTC$grad.sem10,
+                          z = PTC$college.id.semR10)
+PTC$r2.ftpt.sem11 <- mapply(state.recoding, 
+                          w = PTC$degree.earned.level.code.sem11, 
+                          x = PTC$ftptcode.sem11, 
+                          y = PTC$grad.sem11,
+                          z = PTC$college.id.semR11)
+PTC$r2.ftpt.sem12 <- mapply(state.recoding, 
+                          w = PTC$degree.earned.level.code.sem12, 
+                          x = PTC$ftptcode.sem12, 
+                          y = PTC$grad.sem12,
+                          z = PTC$college.id.semR12)
+PTC$r2.ftpt.sem13 <- mapply(state.recoding, 
+                          w = PTC$degree.earned.level.code.sem13, 
+                          x = PTC$ftptcode.sem13, 
+                          y = PTC$grad.sem13,
+                          z = PTC$college.id.semR13)
+PTC$r2.ftpt.sem14 <- mapply(state.recoding, 
+                          w = PTC$degree.earned.level.code.sem14, 
+                          x = PTC$ftptcode.sem14, 
+                          y = PTC$grad.sem14,
+                          z = PTC$college.id.semR14)
+PTC$r2.ftpt.sem15 <- mapply(state.recoding, 
+                          w = PTC$degree.earned.level.code.sem15, 
+                          x = PTC$ftptcode.sem15, 
+                          y = PTC$grad.sem15,
+                          z = PTC$college.id.semR15)
+PTC$r2.ftpt.sem16 <- mapply(state.recoding, 
+                          w = PTC$degree.earned.level.code.sem16, 
+                          x = PTC$ftptcode.sem16, 
+                          y = PTC$grad.sem16,
+                          z = PTC$college.id.semR16)
+PTC$r2.ftpt.sem17 <- mapply(state.recoding, 
+                          w = PTC$degree.earned.level.code.sem17, 
+                          x = PTC$ftptcode.sem17, 
+                          y = PTC$grad.sem17,
+                          z = PTC$college.id.semR17)
+PTC$r2.ftpt.sem18 <- mapply(state.recoding, 
+                          w = PTC$degree.earned.level.code.sem18, 
+                          x = PTC$ftptcode.sem18, 
+                          y = PTC$grad.sem18,
+                          z = PTC$college.id.semR18)
+PTC$r2.ftpt.sem19 <- mapply(state.recoding, 
+                          w = PTC$degree.earned.level.code.sem19, 
+                          x = PTC$ftptcode.sem19, 
+                          y = PTC$grad.sem19,
+                          z = PTC$college.id.semR19)
+PTC$r2.ftpt.sem20 <- mapply(state.recoding, 
+                          w = PTC$degree.earned.level.code.sem20, 
+                          x = PTC$ftptcode.sem20, 
+                          y = PTC$grad.sem20,
+                          z = PTC$college.id.semR20)
+
 #the number of ft students (and pt) drops from the regular to the recoded ftpt 
 # variable for sem 11 (and possibly others). Let's explore these people to see if it's 
 # reasonable for them to leave this category. 
@@ -80,13 +330,13 @@ PTC <- merge(PTC,FTPT,by="oira.student.id")
 spring.terms <- as.Date(c('2000-02-01', '2001-02-01', '2002-02-01'), "%Y-%m-%d")
 
 PTC$spring <- ifelse(PTC$entry.date %in% spring.terms, c("Spring"), c("Fall"))
+PTC$spring <- factor(PTC$spring, levels = c("Fall", "Spring"))
 table(PTC$spring)
-PTC$spring <- as.factor(PTC$spring)
 
 # Flag pell recipients
 PTC$pell.awd.fy01[is.na(PTC$pell.awd.fy01)] <- 0 # recode Null to 0
 PTC$pell <- ifelse(PTC$pell.awd.fy01 > 0, c("Pell"), c("No Pell"))
-PTC$pell <- as.factor(PTC$pell)
+PTC$pell <- factor(PTC$pell, levels = c("No Pell", "Pell"))
 table(PTC$pell)
 
 # Find the last degree pursued
@@ -131,7 +381,7 @@ table(NSC$trans.last.college.level)
 # however these numbers are bigger than those in Stata which I think exclude non-trans
 # students. Do more work to reconcile these numbers. 
 
-PTCa <- merge(PTC, NSC, all.x = TRUE)
+PTC <- merge(PTC, NSC, all.x = TRUE)
 
 
 
