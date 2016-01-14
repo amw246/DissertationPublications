@@ -97,30 +97,39 @@ state.recoding <- function(w, x, y, z){if(w == 1) {
 PTC$degree.earned.level.code.sem1 <- 0
 #FIx this so NA becomes 0
 
-PTC[deg.list] <- 0
-deg.list <- names(PTC)[c(which(colnames(PTC)=="degree.earned.level.code.sem1"),
-                         which(colnames(PTC)=="degree.earned.level.code.sem2"),
-                         which(colnames(PTC)=="degree.earned.level.code.sem3"),
-                         which(colnames(PTC)=="degree.earned.level.code.sem4"),
-                         which(colnames(PTC)=="degree.earned.level.code.sem5"),
-                         which(colnames(PTC)=="degree.earned.level.code.sem6"),
-                         which(colnames(PTC)=="degree.earned.level.code.sem7"),
-                         which(colnames(PTC)=="degree.earned.level.code.sem8"),
-                         which(colnames(PTC)=="degree.earned.level.code.sem9"),
-                         which(colnames(PTC)=="degree.earned.level.code.sem10"),
-                         which(colnames(PTC)=="degree.earned.level.code.sem11"),
-                         which(colnames(PTC)=="degree.earned.level.code.sem12"),
-                         which(colnames(PTC)=="degree.earned.level.code.sem13"),
-                         which(colnames(PTC)=="degree.earned.level.code.sem14"),
-                         which(colnames(PTC)=="degree.earned.level.code.sem15"),
-                         which(colnames(PTC)=="degree.earned.level.code.sem16"),
-                         which(colnames(PTC)=="degree.earned.level.code.sem17"),
-                         which(colnames(PTC)=="degree.earned.level.code.sem18"),
-                         which(colnames(PTC)=="degree.earned.level.code.sem19"),
-                         which(colnames(PTC)=="degree.earned.level.code.sem20"))]
+# PTC[deg.list] <- 0
+# deg.list <- names(PTC)[c(which(colnames(PTC)=="degree.earned.level.code.sem1"),
+#                          which(colnames(PTC)=="degree.earned.level.code.sem2"),
+#                          which(colnames(PTC)=="degree.earned.level.code.sem3"),
+#                          which(colnames(PTC)=="degree.earned.level.code.sem4"),
+#                          which(colnames(PTC)=="degree.earned.level.code.sem5"),
+#                          which(colnames(PTC)=="degree.earned.level.code.sem6"),
+#                          which(colnames(PTC)=="degree.earned.level.code.sem7"),
+#                          which(colnames(PTC)=="degree.earned.level.code.sem8"),
+#                          which(colnames(PTC)=="degree.earned.level.code.sem9"),
+#                          which(colnames(PTC)=="degree.earned.level.code.sem10"),
+#                          which(colnames(PTC)=="degree.earned.level.code.sem11"),
+#                          which(colnames(PTC)=="degree.earned.level.code.sem12"),
+#                          which(colnames(PTC)=="degree.earned.level.code.sem13"),
+#                          which(colnames(PTC)=="degree.earned.level.code.sem14"),
+#                          which(colnames(PTC)=="degree.earned.level.code.sem15"),
+#                          which(colnames(PTC)=="degree.earned.level.code.sem16"),
+#                          which(colnames(PTC)=="degree.earned.level.code.sem17"),
+#                          which(colnames(PTC)=="degree.earned.level.code.sem18"),
+#                          which(colnames(PTC)=="degree.earned.level.code.sem19"),
+#                          which(colnames(PTC)=="degree.earned.level.code.sem20"))]
+# 122 125 128 131 134 137 140 143 146 149 152 155 158 161 164 167 170 173 176
+deg.list <- grep("degree.earned.level.code", colnames(PTC))
+deg.list <- c(deg.list[length(deg.list)],deg.list[-length(deg.list)])
 
-col.list <- names(PTC)[c(which(colnames(PTC)=="college.id.semR2"):
-                         which(colnames(PTC)=="college.id.semR20"))]
+PTC$college.id.semR1 <- PTC$college.id
+col.list <- c(which(colnames(PTC)=="college.id.semR1"),which(colnames(PTC)=="college.id.semR2"):
+                which(colnames(PTC)=="college.id.semR20"))
+
+
+# col.list <- grep("college.id.semR", colnames(PTC))
+# col.list2 <- names(PTC)[c(which(colnames(PTC)=="college.id.semR2"):
+#                          which(colnames(PTC)=="college.id.semR20"))]
 
 
 
@@ -129,8 +138,13 @@ col.list <- names(PTC)[c(which(colnames(PTC)=="college.id.semR2"):
 
 
 
-ftpt.list <- names(PTC)[c(which(colnames(PTC)=="ftptcode.sem01"):
-                         which(colnames(PTC)=="ftptcode.sem20"))]
+# ftpt.list <- names(PTC)[c(which(colnames(PTC)=="ftptcode.sem01"):
+#                          which(colnames(PTC)=="ftptcode.sem20"))]
+
+ftpt.list <- grep("^ftptcode.sem", colnames(PTC))
+
+grad.list <- grep("grad.sem", colnames(PTC))
+
 # 
 # apply(PTC[ftpt.list], 2, null.recode)
 
@@ -215,7 +229,46 @@ PTC$college.id.semR20[is.na(PTC$college.id.semR20)] <- 0
 #   PTC$x[is.na(PTC$x)] <- 0
 # }
 # null.recode(degree.earned.level.code.sem2)
+place <- 1
 
+for (place in 1:length(deg.list)){
+  PTC[,ncol(PTC)+1] <- mapply(state.recoding, 
+                              w = PTC[,deg.list[place]], 
+                              x = PTC[,ftpt.list[place]], 
+                              y = PTC[,grad.list[place]],
+                              z = PTC[,col.list[place]])
+  colnames(PTC) <- c(colnames(PTC)[-ncol(PTC)],paste0("r2.ftpt.sem",place))
+}
+
+
+# foreach i of numlist 20/3 {
+#   local j = `i' - 1
+#   while `j' >=2 {
+#     replace r_ftptcode_sem`i' = 8 if  r_ftptcode_sem`i'== 3 & inlist(r_ftptcode_sem`j',5, 6,7) //post-grad
+# replace r_ftptcode_sem`i' = 4 if  r_ftptcode_sem`i'== 3 & r_ftptcode_sem`j'==4 & transferred_out==1 //transfer
+# local j = `j' - 1
+# 		}
+# }
+
+r2.ftpt.list <- grep("^r2.ftpt",colnames(PTC))
+  
+r2.ftpt.sem20 <- ifelse(
+  (PTC$r2.ftpt.sem20 == 3 & PTC$r2.ftpt.sem19 %in% c(5,6,7)), 
+  8,PTC$r2.ftpt.sem20
+)
+r2.ftpt.sem20 <- ifelse(
+  (PTC$r2.ftpt.sem20 == 3 & PTC$r2.ftpt.sem19 == 4 & PTC$transferred.out==1), 
+  4,PTC$r2.ftpt.sem20
+)
+
+PTC$r2.ftpt.sem20 == 3 & PTC$r2.ftpt.sem19 %in% c(5,6,7)
+
+ifelse(
+  (PTC$r2.ftpt.sem20 == 3 & PTC$r2.ftpt.sem19 %in% c(5,6,7)), 
+TRUE,FALSE
+)
+
+ifelse(1>2,3,4)
 
 PTC$r2.ftpt.sem1 <- mapply(state.recoding, 
                          w = PTC$degree.earned.level.code.sem1, 
