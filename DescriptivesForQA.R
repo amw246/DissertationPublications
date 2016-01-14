@@ -1,29 +1,182 @@
 library(foreign)
-# PTC1<-read.dta("/Volumes/Untitled/20131125_Wallace_f99-s00.dta", 
-#                  convert.factors=FALSE, convert.underscore=TRUE)
-# 
-# 
-# library(foreign)
-PTC2<-read.dta("O:\\!Policy\\Projects\\Policy Tracking Cohort\\Public Use\\Wallace Dissertation\\20131125_Wallace_f00-s02.dta", 
+PTC1 <- read.dta("/Volumes/untitled/20131125_Data_Wallace_Dissertation/20131125_Wallace_f99-s00.dta", 
+                 convert.factors=FALSE, convert.underscore=TRUE)
+myvars <- c("ftptcode.sem01","ftptcode.sem02","ftptcode.sem03","ftptcode.sem04",
+            "ftptcode.sem05","ftptcode.sem06","ftptcode.sem07","ftptcode.sem08",
+            "ftptcode.sem09","ftptcode.sem10","ftptcode.sem11","ftptcode.sem12",
+            "ftptcode.sem13","ftptcode.sem14","ftptcode.sem15","ftptcode.sem16",
+            "ftptcode.sem17","ftptcode.sem18","ftptcode.sem19","ftptcode.sem20",
+            "oira.student.id","college.id", "entry.date","degree.pursued.level.code",
+            "crdsem01","gpasem01","ethnicity.imputed.code","aa.inst.400",
+            "aa.inst.300","aa.inst.200","aa.inst.150","aa.inst.100",
+            "ba.inst.200","ba.inst.150","ba.inst.100","cpi.units.total", "caa.total",
+            "cas.sat.total.recntrd", "aa.date", "ba.date","aa.deg.date", "ba.deg.date",
+            "dependent","female","aa.100","aa.150","aa.200","aa.300","aa.400","ba.100",
+            "ba.150","ba.200","nodelay","entry.age","best.math","best.writ","best.read",
+            "need.any.remediation","last.college.code","grad.sem01","grad.sem02",
+            "grad.sem03","grad.sem04","grad.sem05","grad.sem06","grad.sem07",
+            "grad.sem08","grad.sem09","grad.sem10","grad.sem11","grad.sem12", 
+            "grad.sem13","grad.sem14","grad.sem15","grad.sem16","grad.sem17",
+            "grad.sem18","grad.sem19","grad.sem20",
+            "college.id.semR2","college.id.semR3","college.id.semR4",
+            "college.id.semR5","college.id.semR6","college.id.semR7",
+            "college.id.semR8","college.id.semR9","college.id.semR10",
+            "college.id.semR11","college.id.semR12","college.id.semR13",
+            "college.id.semR14","college.id.semR15","college.id.semR17",
+            "college.id.semR18","college.id.semR19","college.id.semR20",
+            "pell.awd.fy01","ever.transferred", "transferred.out",
+            "degree.pursued.lvl.code.sem02","degree.pursued.lvl.code.sem03",
+            "degree.pursued.lvl.code.sem04","degree.pursued.lvl.code.sem05",
+            "degree.pursued.lvl.code.sem06","degree.pursued.lvl.code.sem07",
+            "degree.pursued.lvl.code.sem08","degree.pursued.lvl.code.sem09",
+            "degree.pursued.lvl.code.sem10","degree.pursued.lvl.code.sem11",
+            "degree.pursued.lvl.code.sem12","degree.pursued.lvl.code.sem13",
+            "degree.pursued.lvl.code.sem14","degree.pursued.lvl.code.sem15",
+            "degree.pursued.lvl.code.sem16","degree.pursued.lvl.code.sem17",
+            "degree.pursued.lvl.code.sem18","degree.pursued.lvl.code.sem19",
+            "degree.pursued.lvl.code.sem20"
+          )
+PTC1 <- PTC1[myvars]
+
+PTC2 <- read.dta("/Volumes/untitled/20131125_Data_Wallace_Dissertation/20131125_Wallace_f00-s02.dta", 
                convert.factors=FALSE, convert.underscore=TRUE)
-# PTC3<-read.dta("/Volumes/Untitled/20131125_Wallace_f02-s04.dta", 
-#                convert.factors=FALSE, convert.underscore=TRUE)
+PTC2 <- PTC2[myvars]
 
-# I keep getting an error :
-# Error in read.dta("/Volumes/Untitled/20131125_Wallace_f02-s04.dta", 
-#                   convert.factors = FALSE,  : 
-#                     a binary read error occurred
-# I'll explore this later
+PTC3 <- read.dta("/Volumes/untitled/20131125_Data_Wallace_Dissertation/20131125_Wallace_f02-s04.dta", 
+               convert.factors=FALSE, convert.underscore=TRUE)
+PTC3 <- PTC3[myvars]
+table(PTC3$entry.date)
+# 2002-09-01 2003-02-01 2003-09-01 2004-02-01 
+# 26478       8768      27135       9020 
 
-# PTC <- read.dta("/Volumes/Untitled/20131203_PTC.dta", 
-#                 convert.factors=FALSE, convert.underscore=TRUE)
+#For dropping the later terms
+PTC3 <- PTC3[ which(PTC3$entry.date==as.Date("2002-09-01") ), ]
+table(PTC3$entry.date)
+# 2002-09-01 
+# 26478 
 
-PTC <- read.dta("C:\\Users\\awallace\\Desktop\\Andrew's Files\\Dissertation\\20151120_PTC_Stata9.dta", 
-                convert.factors=FALSE, convert.underscore=TRUE)
+PTC <- rbind(PTC1, PTC2, PTC3)
 
-table(PTC$entry.date)
-# 1999-09-01 2000-02-01 2000-09-01 2001-02-01 2001-09-01 2002-02-01 2002-09-01 
-# 23729       8531      24611       8315      24926       9270      26133 
+DEGS <- read.dta("/Volumes/untitled/20131204_Degree_by_SEM.dta", 
+                 convert.factors=FALSE, convert.underscore=TRUE)
+PTC <- merge(PTC,DEGS,by="oira.student.id")
 
-table(PTC$
+#until I can figure out how to recode ftpt below, let's use the data from Stata
+
+FTPT <- read.dta("/Volumes/untitled/20151122_ftpt_recode.dta",
+                  convert.factors = FALSE, convert.underscore = TRUE)
+
+PTC <- merge(PTC,FTPT,by="oira.student.id")
+
+#the number of ft students (and pt) drops from the regular to the recoded ftpt 
+# variable for sem 11 (and possibly others). Let's explore these people to see if it's 
+# reasonable for them to leave this category. 
+
+
+
+
+
+# Flag spring entrants
+spring.terms <- as.Date(c('2000-02-01', '2001-02-01', '2002-02-01'), "%Y-%m-%d")
+
+PTC$spring <- ifelse(PTC$entry.date %in% spring.terms, c("Spring"), c("Fall"))
+table(PTC$spring)
+PTC$spring <- as.factor(PTC$spring)
+
+# Flag pell recipients
+PTC$pell.awd.fy01[is.na(PTC$pell.awd.fy01)] <- 0 # recode Null to 0
+PTC$pell <- ifelse(PTC$pell.awd.fy01 > 0, c("Pell"), c("No Pell"))
+PTC$pell <- as.factor(PTC$pell)
+table(PTC$pell)
+
+# Find the last degree pursued
+#the 1st sem variable is differently named and in a different location than the others
+deg.pursued1 <- names(PTC)[which(colnames(PTC)=="degree.pursued.level.code")] 
+deg.pursued2 <- names(PTC)[which(colnames(PTC)=="degree.pursued.lvl.code.sem02"):
+                            which(colnames(PTC)=="degree.pursued.lvl.code.sem20")]
+deg.pursued <- c(deg.pursued1, deg.pursued2)
+
+
+lastValue <- function(x) tail(x[!is.na(x)],1)
+PTC$last.deg.pursued <- apply(PTC[deg.pursued], 1, lastValue)
+
+NSC <- read.dta("/Volumes/untitled/20131120_NSC_Wide.dta",
+                convert.factors = FALSE, convert.underscore = TRUE)
+NSC.keeplist <- grep("year4year", colnames(NSC))
+#holy crap grep is useful here! Saved a hundred lines of code
+#We also want the oira id, so add column 1 to the keeplist
+NSC.keeplist <- c(1, NSC.keeplist)
+
+NSC <- NSC[NSC.keeplist]
+
+#missingness is "" here which the lastValue function can't deal with so we recode
+NSC[NSC == ""] <- NA
+# there are also odd "L" values here
+NSC[NSC == "L"] <- NA
+#The apply in lastValue doesn't seem to like it if there is no initial value, 
+# so I'm bringing in their last deg pursued from the PTC. I need to be careful not to 
+# overwrite later in-CUNY changes with this . 
+PTC.Level <- PTC[,c("oira.student.id", "last.deg.pursued")]
+NSC <- merge(PTC.Level, NSC , by="oira.student.id")
+NSC$trans.last.college.level <- apply(NSC[, 2:103], 1, lastValue)
+#recode 4 (i.e. 4 year) to 3 (i.e. BA)
+NSC$trans.last.college.level[NSC$trans.last.college.level == 4] <- 3
+NSC$trans.last.college.level <- as.factor(NSC$trans.last.college.level)
+table(NSC$trans.last.college.level)
+
+# 1     2     3 
+# 146 34104 24451 
+
+# The inclusion of certificates isn't surprising given they haven't been dropped yet
+# however these numbers are bigger than those in Stata which I think exclude non-trans
+# students. Do more work to reconcile these numbers. 
+
+PTCa <- merge(PTC, NSC, all.x = TRUE)
+
+
+
+
+#Drop the Cert students
+PTC <- PTC[ which(PTC$degree.pursued.level.code > 1), ]
+
+
+#Need to calculate these:                                        
+# trans.last.college.level  to get to this I went back to the NSC data, hmm 
+# last.deg.pursued.R              
+# group     
+#delayed.grad
+
+#create the pattern variable (don't know if still necessary)
+r.ftpt.list <- names(PTC)[which(colnames(PTC)=="r.ftptcode.sem1"):
+                            which(colnames(PTC)=="r.ftptcode.sem20")] 
+PTC$pattern <- apply(PTC[,r.ftpt.list],1, paste, collapse = "")
+
+
+#descriptives
+PTC$ethnicity.imputed.code <- factor(PTC$ethnicity.imputed.code)
+PTC$degree.pursued.level.code <- factor(PTC$degree.pursued.level.code, levels = c(3,2))
+#set the appropriate comparison group for degree
+
+PTC$female <- factor(PTC$female)
+
+eth <- table(PTC$ethnicity.imputed.code)
+gender <- table(PTC$female)
+college <- table(PTC$college.id)
+term <- table(entry.date)
+deg <- table(PTC$degree.pursued.level.code)
+
+#a quick test of probits
+#ba.150 was read in as an integer
+#convert it to a factor
+PTC$ba.150 <- factor(PTC$ba.150)
+
+myprobit <- glm(ba.150 ~ ethnicity.imputed.code + degree.pursued.level.code + female, family=binomial(link="probit"), data=PTC)
+
+## model summary
+summary(myprobit)
+
+#well, it runs. 
+a = matrix(c(2, 3, NA,1, NA, 1,2, 12, 19), nrow = 3, ncol = 3, byrow = TRUE)
+df = data.frame(a) 
+lastValue <- function(x) tail(x[!is.na(x)],1)
 
