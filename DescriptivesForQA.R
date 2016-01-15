@@ -67,29 +67,11 @@ DEGS <- read.dta("/Volumes/untitled/20131204_Degree_by_SEM.dta",
                  convert.factors=FALSE, convert.underscore=TRUE)
 PTC <- merge(PTC,DEGS,by="oira.student.id")
 
-#until I can figure out how to recode ftpt below, let's use the data from Stata
-
+#Drop this once the final recoding is confirmed
 FTPT <- read.dta("/Volumes/untitled/20151122_ftpt_recode.dta",
                   convert.factors = FALSE, convert.underscore = TRUE)
 
 PTC <- merge(PTC,FTPT,by="oira.student.id")
-
-state.recoding <- function(w, x, y, z){if(w == 1) {
-  return(5)
-} else if (w == 2) {
-  return(6)
-} else if (w == 3) {
-  return(7)
-} else if (x == 1 && y == 0){
-  return(1)
-} else if (x == 2 && y == 0){
-  return(2)
-} else if (z > 30){
-  return(4)
-} else {
-  return(3)
-}
-}
 
 PTC$degree.earned.level.code.sem1 <- 0
 
@@ -187,41 +169,47 @@ PTC$college.id.semR20[is.na(PTC$college.id.semR20)] <- 0
 # null.recode <- function(x){
 #   PTC$x[is.na(PTC$x)] <- 0
 # }
-# null.recode(degree.earned.level.code.sem2)
-place <- 1
+# null.recode(degree.earned.level.code.sem2
+
+state.recoding <- function(deg, ftpt, grad, college){
+  if      (deg == 1) {
+  return(5)
+} else if (deg == 2) {
+  return(6)
+} else if (deg == 3) {
+  return(7)
+} else if (ftpt == 1 && grad == 0){
+  return(1)
+} else if (ftpt == 2 && grad == 0){
+  return(2)
+} else if (college > 30){
+  return(4)
+} else {
+  return(3)
+}
+}
 
 for (place in 1:length(deg.list)){
   PTC[,ncol(PTC)+1] <- mapply(state.recoding, 
-                              w = PTC[,deg.list[place]], 
-                              x = PTC[,ftpt.list[place]], 
-                              y = PTC[,grad.list[place]],
-                              z = PTC[,col.list[place]])
-  colnames(PTC) <- c(colnames(PTC)[-ncol(PTC)],paste0("r2.ftpt.sem",place))
+                              deg = PTC[,deg.list[place]], 
+                              ftpt = PTC[,ftpt.list[place]], 
+                              grad = PTC[,grad.list[place]],
+                              college = PTC[,col.list[place]])
+  colnames(PTC) <- c(colnames(PTC)[-ncol(PTC)],paste0("state.sem",place))
 }
 
-
-# foreach i of numlist 20/3 {
-#   local j = `i' - 1
-#   while `j' >=2 {
-#     replace r_ftptcode_sem`i' = 8 if  r_ftptcode_sem`i'== 3 & inlist(r_ftptcode_sem`j',5, 6,7) //post-grad
-# replace r_ftptcode_sem`i' = 4 if  r_ftptcode_sem`i'== 3 & r_ftptcode_sem`j'==4 & transferred_out==1 //transfer
-# local j = `j' - 1
-# 		}
-# }
-
-r2.ftpt.list <- grep("^r2.ftpt",colnames(PTC))
-# r2.ftpt.list.reversed <- sort(r2.ftpt.list, decreasing = TRUE)  
+state.list <- grep("^state.sem",colnames(PTC))
 
 for (sem in 20:3){
   prev.sem = sem - 1
   while (prev.sem >= 2){
-        PTC[,r2.ftpt.list[sem]] <- ifelse(
-          (PTC[,r2.ftpt.list[sem]] == 3 & PTC[,r2.ftpt.list[prev.sem]] %in% c(5,6,7)), 
-          8,PTC[,r2.ftpt.list[sem]]
+        PTC[,state.list[sem]] <- ifelse(
+          (PTC[,state.list[sem]] == 3 & PTC[,state.list[prev.sem]] %in% c(5,6,7)), 
+          8,PTC[,state.list[sem]]
         )
-        PTC[,r2.ftpt.list[sem]] <- ifelse(
-          (PTC[,r2.ftpt.list[sem]]== 3 & PTC[,r2.ftpt.list[prev.sem]] == 4 & PTC$transferred.out==1), 
-          4,PTC[,r2.ftpt.list[sem]]
+        PTC[,state.list[sem]] <- ifelse(
+          (PTC[,state.list[sem]]== 3 & PTC[,state.list[prev.sem]] == 4 & PTC$transferred.out==1), 
+          4,PTC[,state.list[sem]]
         )
         prev.sem = prev.sem - 1
   }
@@ -233,123 +221,13 @@ r.ftpt.list <- grep("^r.ftpt",colnames(PTC))
 
 for (place in 1:length(deg.list)){
   PTC[,ncol(PTC)+1] <- mapply(diff.test, 
-                              var1 = PTC[,r2.ftpt.list[place]], 
-                              var2 = PTC[,r.ftpt.list[place]])
-  colnames(PTC) <- c(colnames(PTC)[-ncol(PTC)],paste0("ftpt.recode.test",place))
+                              var1 = PTC[,state.list[place]], 
+                              var2 = PTC[,state.list[place]])
+  colnames(PTC) <- c(colnames(PTC)[-ncol(PTC)],paste0("state.recode.test",place))
 }
 
-ftpt.recode.test.list <- grep("^ftpt.recode.test",colnames(PTC))
-lapply(PTC[,ftpt.recode.test.list], table)
-
-
-
-PTC$r2.ftpt.sem1 <- mapply(state.recoding, 
-                         w = PTC$degree.earned.level.code.sem1, 
-                         x = PTC$ftptcode.sem01, 
-                         y = PTC$grad.sem01,
-                         z = PTC$college.id)
-PTC$r2.ftpt.sem2 <- mapply(state.recoding, 
-                         w = PTC$degree.earned.level.code.sem2, 
-                         x = PTC$ftptcode.sem02, 
-                         y = PTC$grad.sem02,
-                         z = PTC$college.id.semR2)
-PTC$r2.ftpt.sem3 <- mapply(state.recoding, 
-                         w = PTC$degree.earned.level.code.sem3, 
-                         x = PTC$ftptcode.sem03, 
-                         y = PTC$grad.sem03,
-                         z = PTC$college.id.semR3)
-PTC$r2.ftpt.sem4 <- mapply(state.recoding, 
-                          w = PTC$degree.earned.level.code.sem4, 
-                          x = PTC$ftptcode.sem04, 
-                          y = PTC$grad.sem04,
-                          z = PTC$college.id.semR4)
-PTC$r2.ftpt.sem5 <- mapply(state.recoding, 
-                          w = PTC$degree.earned.level.code.sem5, 
-                          x = PTC$ftptcode.sem05, 
-                          y = PTC$grad.sem05,
-                          z = PTC$college.id.semR5)
-PTC$r2.ftpt.sem6 <- mapply(state.recoding, 
-                          w = PTC$degree.earned.level.code.sem6, 
-                          x = PTC$ftptcode.sem06, 
-                          y = PTC$grad.sem06,
-                          z = PTC$college.id.semR6)
-PTC$r2.ftpt.sem7 <- mapply(state.recoding, 
-                          w = PTC$degree.earned.level.code.sem7, 
-                          x = PTC$ftptcode.sem07, 
-                          y = PTC$grad.sem07,
-                          z = PTC$college.id.semR7)
-PTC$r2.ftpt.sem8 <- mapply(state.recoding, 
-                          w = PTC$degree.earned.level.code.sem8, 
-                          x = PTC$ftptcode.sem08, 
-                          y = PTC$grad.sem08,
-                          z = PTC$college.id.semR8)
-PTC$r2.ftpt.sem9 <- mapply(state.recoding, 
-                          w = PTC$degree.earned.level.code.sem9, 
-                          x = PTC$ftptcode.sem09, 
-                          y = PTC$grad.sem09,
-                          z = PTC$college.id.semR9)
-PTC$r2.ftpt.sem10 <- mapply(state.recoding, 
-                          w = PTC$degree.earned.level.code.sem10, 
-                          x = PTC$ftptcode.sem10, 
-                          y = PTC$grad.sem10,
-                          z = PTC$college.id.semR10)
-PTC$r2.ftpt.sem11 <- mapply(state.recoding, 
-                          w = PTC$degree.earned.level.code.sem11, 
-                          x = PTC$ftptcode.sem11, 
-                          y = PTC$grad.sem11,
-                          z = PTC$college.id.semR11)
-PTC$r2.ftpt.sem12 <- mapply(state.recoding, 
-                          w = PTC$degree.earned.level.code.sem12, 
-                          x = PTC$ftptcode.sem12, 
-                          y = PTC$grad.sem12,
-                          z = PTC$college.id.semR12)
-PTC$r2.ftpt.sem13 <- mapply(state.recoding, 
-                          w = PTC$degree.earned.level.code.sem13, 
-                          x = PTC$ftptcode.sem13, 
-                          y = PTC$grad.sem13,
-                          z = PTC$college.id.semR13)
-PTC$r2.ftpt.sem14 <- mapply(state.recoding, 
-                          w = PTC$degree.earned.level.code.sem14, 
-                          x = PTC$ftptcode.sem14, 
-                          y = PTC$grad.sem14,
-                          z = PTC$college.id.semR14)
-PTC$r2.ftpt.sem15 <- mapply(state.recoding, 
-                          w = PTC$degree.earned.level.code.sem15, 
-                          x = PTC$ftptcode.sem15, 
-                          y = PTC$grad.sem15,
-                          z = PTC$college.id.semR15)
-PTC$r2.ftpt.sem16 <- mapply(state.recoding, 
-                          w = PTC$degree.earned.level.code.sem16, 
-                          x = PTC$ftptcode.sem16, 
-                          y = PTC$grad.sem16,
-                          z = PTC$college.id.semR16)
-PTC$r2.ftpt.sem17 <- mapply(state.recoding, 
-                          w = PTC$degree.earned.level.code.sem17, 
-                          x = PTC$ftptcode.sem17, 
-                          y = PTC$grad.sem17,
-                          z = PTC$college.id.semR17)
-PTC$r2.ftpt.sem18 <- mapply(state.recoding, 
-                          w = PTC$degree.earned.level.code.sem18, 
-                          x = PTC$ftptcode.sem18, 
-                          y = PTC$grad.sem18,
-                          z = PTC$college.id.semR18)
-PTC$r2.ftpt.sem19 <- mapply(state.recoding, 
-                          w = PTC$degree.earned.level.code.sem19, 
-                          x = PTC$ftptcode.sem19, 
-                          y = PTC$grad.sem19,
-                          z = PTC$college.id.semR19)
-PTC$r2.ftpt.sem20 <- mapply(state.recoding, 
-                          w = PTC$degree.earned.level.code.sem20, 
-                          x = PTC$ftptcode.sem20, 
-                          y = PTC$grad.sem20,
-                          z = PTC$college.id.semR20)
-
-#the number of ft students (and pt) drops from the regular to the recoded ftpt 
-# variable for sem 11 (and possibly others). Let's explore these people to see if it's 
-# reasonable for them to leave this category. 
-
-
-
+state.recode.test.list <- grep("^state.recode.test",colnames(PTC))
+lapply(PTC[,state.recode.test.list], table)
 
 
 # Flag spring entrants
