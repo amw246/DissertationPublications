@@ -89,6 +89,22 @@ grad.list <- grep("grad.sem", colnames(PTC))
 # 
 # apply(PTC[ftpt.list], 2, null.recode)
 
+null.recode <- function(var){
+  var[is.na(var)] <- 0
+}
+
+PTC$test <- NA
+PTC$test <- apply(PTC$test, null.recode)
+
+for (sem in 1:length(deg.list)){
+  PTC$degree.earned.level.code.sem2[is.na(PTC$degree.earned.level.code.sem2)] <- 0    
+  PTC[,deg.list[place]]
+  PTC[,deg.list[place]] <- ifelse(
+    (PTC[,deg.list[place]] == 3 , 
+      0 , PTC[,deg.list[place]]
+  )
+}
+
 PTC$degree.earned.level.code.sem2[is.na(PTC$degree.earned.level.code.sem2)] <- 0
 PTC$ftptcode.sem02[is.na(PTC$ftptcode.sem02)] <- 0 
 PTC$college.id.semR2[is.na(PTC$college.id.semR2)] <- 0
@@ -225,6 +241,7 @@ for (place in 1:length(deg.list)){
                               var2 = PTC[,state.list[place]])
   colnames(PTC) <- c(colnames(PTC)[-ncol(PTC)],paste0("state.recode.test",place))
 }
+
 
 state.recode.test.list <- grep("^state.recode.test",colnames(PTC))
 lapply(PTC[,state.recode.test.list], table)
