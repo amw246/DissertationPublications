@@ -1,5 +1,3 @@
-test2
-
 #This file will read in the data files from the institution,
 #conduct appropriate data transformation, and lay the groundwork
 #for the analysis to come. 
@@ -93,53 +91,14 @@ state.recoding <- function(w, x, y, z){if(w == 1) {
 }
 }
 
-#need to add degree
 PTC$degree.earned.level.code.sem1 <- 0
-#FIx this so NA becomes 0
 
-# PTC[deg.list] <- 0
-# deg.list <- names(PTC)[c(which(colnames(PTC)=="degree.earned.level.code.sem1"),
-#                          which(colnames(PTC)=="degree.earned.level.code.sem2"),
-#                          which(colnames(PTC)=="degree.earned.level.code.sem3"),
-#                          which(colnames(PTC)=="degree.earned.level.code.sem4"),
-#                          which(colnames(PTC)=="degree.earned.level.code.sem5"),
-#                          which(colnames(PTC)=="degree.earned.level.code.sem6"),
-#                          which(colnames(PTC)=="degree.earned.level.code.sem7"),
-#                          which(colnames(PTC)=="degree.earned.level.code.sem8"),
-#                          which(colnames(PTC)=="degree.earned.level.code.sem9"),
-#                          which(colnames(PTC)=="degree.earned.level.code.sem10"),
-#                          which(colnames(PTC)=="degree.earned.level.code.sem11"),
-#                          which(colnames(PTC)=="degree.earned.level.code.sem12"),
-#                          which(colnames(PTC)=="degree.earned.level.code.sem13"),
-#                          which(colnames(PTC)=="degree.earned.level.code.sem14"),
-#                          which(colnames(PTC)=="degree.earned.level.code.sem15"),
-#                          which(colnames(PTC)=="degree.earned.level.code.sem16"),
-#                          which(colnames(PTC)=="degree.earned.level.code.sem17"),
-#                          which(colnames(PTC)=="degree.earned.level.code.sem18"),
-#                          which(colnames(PTC)=="degree.earned.level.code.sem19"),
-#                          which(colnames(PTC)=="degree.earned.level.code.sem20"))]
-# 122 125 128 131 134 137 140 143 146 149 152 155 158 161 164 167 170 173 176
 deg.list <- grep("degree.earned.level.code", colnames(PTC))
 deg.list <- c(deg.list[length(deg.list)],deg.list[-length(deg.list)])
 
 PTC$college.id.semR1 <- PTC$college.id
 col.list <- c(which(colnames(PTC)=="college.id.semR1"),which(colnames(PTC)=="college.id.semR2"):
                 which(colnames(PTC)=="college.id.semR20"))
-
-
-# col.list <- grep("college.id.semR", colnames(PTC))
-# col.list2 <- names(PTC)[c(which(colnames(PTC)=="college.id.semR2"):
-#                          which(colnames(PTC)=="college.id.semR20"))]
-
-
-
-
-# PTC[deg.list] %>% replace_na(list(PTC[deg.list] = 0))
-
-
-
-# ftpt.list <- names(PTC)[c(which(colnames(PTC)=="ftptcode.sem01"):
-#                          which(colnames(PTC)=="ftptcode.sem20"))]
 
 ftpt.list <- grep("^ftptcode.sem", colnames(PTC))
 
@@ -251,46 +210,38 @@ for (place in 1:length(deg.list)){
 # }
 
 r2.ftpt.list <- grep("^r2.ftpt",colnames(PTC))
-r2.ftpt.list.reversed <- sort(r2.ftpt.list, decreasing = TRUE)  
+# r2.ftpt.list.reversed <- sort(r2.ftpt.list, decreasing = TRUE)  
 
-for (place in 1:length(r2.ftpt.list.reversed )){
-  next.place <- place + 1
-  while(next.place <= length(r2.ftpt.list.reversed )){
-    PTC[,r2.ftpt.list.reversed[place]] <- ifelse(
-      (PTC[,r2.ftpt.list.reversed[place]] == 3 & PTC[,r2.ftpt.list.reversed[place+1]] %in% c(5,6,7)), 
-      8,PTC[,r2.ftpt.list.reversed[place]]
-    )
-    PTC[,r2.ftpt.list.reversed[place]] <- ifelse(
-      (PTC[,r2.ftpt.list.reversed[place]]== 3 & PTC[,r2.ftpt.list.reversed[place+1]] == 4 & PTC$transferred.out==1), 
-      4,PTC[,r2.ftpt.list.reversed[place]]
-    )
-    next.place <- next.place + 1
+for (sem in 20:3){
+  prev.sem = sem - 1
+  while (prev.sem >= 2){
+        PTC[,r2.ftpt.list[sem]] <- ifelse(
+          (PTC[,r2.ftpt.list[sem]] == 3 & PTC[,r2.ftpt.list[prev.sem]] %in% c(5,6,7)), 
+          8,PTC[,r2.ftpt.list[sem]]
+        )
+        PTC[,r2.ftpt.list[sem]] <- ifelse(
+          (PTC[,r2.ftpt.list[sem]]== 3 & PTC[,r2.ftpt.list[prev.sem]] == 4 & PTC$transferred.out==1), 
+          4,PTC[,r2.ftpt.list[sem]]
+        )
+        prev.sem = prev.sem - 1
   }
 }
+# View(PTC[which(PTC$ftpt20.recode.diff== TRUE), 179:220])
 
-#there are 56,722 students who are still coded as 3 who should be a diff code
-#it's all in the second recode. Given the number, I wonder if it's that it only 
-#worked for the 20th sem
+diff.test <- function(var1, var2){return(var1 - var2)}
+r.ftpt.list <- grep("^r.ftpt",colnames(PTC))
 
-# table(PTC$r2.ftpt.sem20)
-# 
-# 1      2      3      4      5      6      7      8 
-# 2154   3860 111417   6783      8    343    587   1020 
-# > table(PTC$r.ftptcode.sem20)
-# 
-# 1     2     3     4     5     6     7     8 
-# 2154  3860 54695 19790     8   343   587 44735 
-PTC$ftpt20.recode.diff <- ifelse(PTC$r2.ftpt.sem20 == 3 & PTC$r.ftptcode.sem20 != 3, TRUE, FALSE)
+for (place in 1:length(deg.list)){
+  PTC[,ncol(PTC)+1] <- mapply(diff.test, 
+                              var1 = PTC[,r2.ftpt.list[place]], 
+                              var2 = PTC[,r.ftpt.list[place]])
+  colnames(PTC) <- c(colnames(PTC)[-ncol(PTC)],paste0("ftpt.recode.test",place))
+}
+
+ftpt.recode.test.list <- grep("^ftpt.recode.test",colnames(PTC))
+lapply(PTC[,ftpt.recode.test.list], table)
 
 
-PTC$r2.ftpt.sem20 == 3 & PTC$r2.ftpt.sem19 %in% c(5,6,7)
-
-ifelse(
-  (PTC$r2.ftpt.sem20 == 3 & PTC$r2.ftpt.sem19 %in% c(5,6,7)), 
-TRUE,FALSE
-)
-
-ifelse(1>2,3,4)
 
 PTC$r2.ftpt.sem1 <- mapply(state.recoding, 
                          w = PTC$degree.earned.level.code.sem1, 
