@@ -2,6 +2,7 @@
 #conduct appropriate data transformation, and lay the groundwork
 #for the analysis to come. 
 
+#There are 3 PTC files to combine into the overall data set
 
 library(foreign)
 PTC1 <- read.dta("/Volumes/untitled/20131125_Data_Wallace_Dissertation/20131125_Wallace_f99-s00.dta", 
@@ -86,106 +87,10 @@ ftpt.list <- grep("^ftptcode.sem", colnames(PTC))
 
 grad.list <- grep("grad.sem", colnames(PTC))
 
-# 
-# apply(PTC[ftpt.list], 2, null.recode)
-
-null.recode <- function(var){
-  var[is.na(var)] <- 0
-}
-
-# PTC$test <- NA
-# PTC$test <- apply(PTC$test, null.recode)
-# 
-# for (sem in 1:length(deg.list)){
-#   PTC$degree.earned.level.code.sem2[is.na(PTC$degree.earned.level.code.sem2)] <- 0    
-#   PTC[,deg.list[place]]
-#   PTC[,deg.list[place]] <- ifelse(
-#     (PTC[,deg.list[place]] == 3 , 
-#       0 , PTC[,deg.list[place]]
-#   )
-# }
-
-PTC$degree.earned.level.code.sem2[is.na(PTC$degree.earned.level.code.sem2)] <- 0
-PTC$ftptcode.sem02[is.na(PTC$ftptcode.sem02)] <- 0 
-PTC$college.id.semR2[is.na(PTC$college.id.semR2)] <- 0
-
-PTC$degree.earned.level.code.sem3[is.na(PTC$degree.earned.level.code.sem3)] <- 0
-PTC$ftptcode.sem03[is.na(PTC$ftptcode.sem03)] <- 0 
-PTC$college.id.semR3[is.na(PTC$college.id.semR3)] <- 0
-
-PTC$degree.earned.level.code.sem4[is.na(PTC$degree.earned.level.code.sem4)] <- 0
-PTC$ftptcode.sem04[is.na(PTC$ftptcode.sem04)] <- 0 
-PTC$college.id.semR4[is.na(PTC$college.id.semR4)] <- 0
-
-PTC$degree.earned.level.code.sem5[is.na(PTC$degree.earned.level.code.sem5)] <- 0
-PTC$ftptcode.sem05[is.na(PTC$ftptcode.sem05)] <- 0 
-PTC$college.id.semR5[is.na(PTC$college.id.semR5)] <- 0
-
-PTC$degree.earned.level.code.sem6[is.na(PTC$degree.earned.level.code.sem6)] <- 0
-PTC$ftptcode.sem06[is.na(PTC$ftptcode.sem06)] <- 0 
-PTC$college.id.semR6[is.na(PTC$college.id.semR6)] <- 0
-
-PTC$degree.earned.level.code.sem7[is.na(PTC$degree.earned.level.code.sem7)] <- 0
-PTC$ftptcode.sem07[is.na(PTC$ftptcode.sem07)] <- 0 
-PTC$college.id.semR7[is.na(PTC$college.id.semR7)] <- 0
-
-PTC$degree.earned.level.code.sem8[is.na(PTC$degree.earned.level.code.sem8)] <- 0
-PTC$ftptcode.sem08[is.na(PTC$ftptcode.sem08)] <- 0 
-PTC$college.id.semR8[is.na(PTC$college.id.semR8)] <- 0
-
-PTC$degree.earned.level.code.sem9[is.na(PTC$degree.earned.level.code.sem9)] <- 0
-PTC$ftptcode.sem09[is.na(PTC$ftptcode.sem09)] <- 0 
-PTC$college.id.semR9[is.na(PTC$college.id.semR9)] <- 0
-
-PTC$degree.earned.level.code.sem10[is.na(PTC$degree.earned.level.code.sem10)] <- 0
-PTC$ftptcode.sem10[is.na(PTC$ftptcode.sem10)] <- 0 
-PTC$college.id.semR10[is.na(PTC$college.id.semR10)] <- 0
-
-PTC$degree.earned.level.code.sem11[is.na(PTC$degree.earned.level.code.sem11)] <- 0
-PTC$ftptcode.sem11[is.na(PTC$ftptcode.sem11)] <- 0 
-PTC$college.id.semR11[is.na(PTC$college.id.semR11)] <- 0
-
-PTC$degree.earned.level.code.sem12[is.na(PTC$degree.earned.level.code.sem12)] <- 0
-PTC$ftptcode.sem12[is.na(PTC$ftptcode.sem12)] <- 0 
-PTC$college.id.semR12[is.na(PTC$college.id.semR12)] <- 0
-
-PTC$degree.earned.level.code.sem13[is.na(PTC$degree.earned.level.code.sem13)] <- 0
-PTC$ftptcode.sem13[is.na(PTC$ftptcode.sem13)] <- 0 
-PTC$college.id.semR13[is.na(PTC$college.id.semR13)] <- 0
-
-PTC$degree.earned.level.code.sem14[is.na(PTC$degree.earned.level.code.sem14)] <- 0
-PTC$ftptcode.sem14[is.na(PTC$ftptcode.sem14)] <- 0 
-PTC$college.id.semR14[is.na(PTC$college.id.semR14)] <- 0
-
-PTC$degree.earned.level.code.sem15[is.na(PTC$degree.earned.level.code.sem15)] <- 0
-PTC$ftptcode.sem15[is.na(PTC$ftptcode.sem15)] <- 0 
-PTC$college.id.semR15[is.na(PTC$college.id.semR15)] <- 0
-
-PTC$degree.earned.level.code.sem16[is.na(PTC$degree.earned.level.code.sem16)] <- 0
-PTC$ftptcode.sem16[is.na(PTC$ftptcode.sem16)] <- 0 
-PTC$college.id.semR16[is.na(PTC$college.id.semR16)] <- 0
-
-PTC$degree.earned.level.code.sem17[is.na(PTC$degree.earned.level.code.sem17)] <- 0
-PTC$ftptcode.sem17[is.na(PTC$ftptcode.sem17)] <- 0 
-PTC$college.id.semR17[is.na(PTC$college.id.semR17)] <- 0
-
-PTC$degree.earned.level.code.sem18[is.na(PTC$degree.earned.level.code.sem18)] <- 0
-PTC$ftptcode.sem18[is.na(PTC$ftptcode.sem18)] <- 0 
-PTC$college.id.semR18[is.na(PTC$college.id.semR18)] <- 0
-
-PTC$degree.earned.level.code.sem19[is.na(PTC$degree.earned.level.code.sem19)] <- 0
-PTC$ftptcode.sem19[is.na(PTC$ftptcode.sem19)] <- 0 
-PTC$college.id.semR19[is.na(PTC$college.id.semR19)] <- 0
-
-PTC$degree.earned.level.code.sem20[is.na(PTC$degree.earned.level.code.sem20)] <- 0
-PTC$ftptcode.sem20[is.na(PTC$ftptcode.sem20)] <- 0 
-PTC$college.id.semR20[is.na(PTC$college.id.semR20)] <- 0
-
-
-# null.recode <- function(x){
-#   PTC$x[is.na(PTC$x)] <- 0
-# }
-# null.recode(degree.earned.level.code.sem2
+#recode NAs to 0 (state.recoding fails when there are NAs in the ifs)
+PTC[deg.list][is.na(PTC[deg.list])] <- 0
+PTC[col.list][is.na(PTC[col.list])] <- 0
+PTC[ftpt.list][is.na(PTC[ftpt.list])] <- 0
 
 state.recoding <- function(deg, ftpt, grad, college){
   if      (deg == 1) {
@@ -216,6 +121,7 @@ for (place in 1:length(deg.list)){
 
 state.list <- grep("^state.sem",colnames(PTC))
 
+#retroactively recode non-enrolled post grad and transfers
 for (sem in 20:3){
   prev.sem = sem - 1
   while (prev.sem >= 2){
@@ -242,10 +148,10 @@ for (place in 1:length(deg.list)){
   colnames(PTC) <- c(colnames(PTC)[-ncol(PTC)],paste0("state.recode.test",place))
 }
 
-
+#test that the difference between the recodes from Stata and the recodes from R is 0
 state.recode.test.list <- grep("^state.recode.test",colnames(PTC))
 lapply(PTC[,state.recode.test.list], table)
-
+#Success!
 
 # Flag spring entrants
 spring.terms <- as.Date(c('2000-02-01', '2001-02-01', '2002-02-01'), "%Y-%m-%d")
@@ -331,15 +237,17 @@ PTC <- PTC[ which(PTC$deg.band < 5), ]
 #Drop the native american students
 PTC <- PTC[ which(PTC$ethnicity.imputed.code < 6), ]
 
+#Remove extraneous object
+rm(PTC1, PTC2, PTC3, PTC.Level, DEGS, FTPT, NSC)
+
 
 #Need to calculate these:                                        
 
 #delayed.grad
 
 #create the pattern variable (don't know if still necessary)
-r.ftpt.list <- names(PTC)[which(colnames(PTC)=="r.ftptcode.sem1"):
-                            which(colnames(PTC)=="r.ftptcode.sem20")] 
-PTC$pattern <- apply(PTC[,r.ftpt.list],1, paste, collapse = "")
+r.ftpt.list <- grep("^r.ftpt",colnames(PTC))
+PTC$pattern <- apply(PTC[,r.ftpt.list ],1, paste, collapse = "")
 
 
 #descriptives
