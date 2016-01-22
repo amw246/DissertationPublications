@@ -93,17 +93,17 @@ null.recode <- function(var){
   var[is.na(var)] <- 0
 }
 
-PTC$test <- NA
-PTC$test <- apply(PTC$test, null.recode)
-
-for (sem in 1:length(deg.list)){
-  PTC$degree.earned.level.code.sem2[is.na(PTC$degree.earned.level.code.sem2)] <- 0    
-  PTC[,deg.list[place]]
-  PTC[,deg.list[place]] <- ifelse(
-    (PTC[,deg.list[place]] == 3 , 
-      0 , PTC[,deg.list[place]]
-  )
-}
+# PTC$test <- NA
+# PTC$test <- apply(PTC$test, null.recode)
+# 
+# for (sem in 1:length(deg.list)){
+#   PTC$degree.earned.level.code.sem2[is.na(PTC$degree.earned.level.code.sem2)] <- 0    
+#   PTC[,deg.list[place]]
+#   PTC[,deg.list[place]] <- ifelse(
+#     (PTC[,deg.list[place]] == 3 , 
+#       0 , PTC[,deg.list[place]]
+#   )
+# }
 
 PTC$degree.earned.level.code.sem2[is.na(PTC$degree.earned.level.code.sem2)] <- 0
 PTC$ftptcode.sem02[is.na(PTC$ftptcode.sem02)] <- 0 
@@ -304,17 +304,36 @@ table(NSC$trans.last.college.level)
 
 PTC <- merge(PTC, NSC, all.x = TRUE)
 
-
-
-
 #Drop the Cert students
 PTC <- PTC[ which(PTC$degree.pursued.level.code > 1), ]
 
+PTC$last.deg.pursued.R <- PTC$last.deg.pursued
+PTC$last.deg.pursued.R[PTC$trans.last.college.level == 2 
+                       & PTC$transferred.out == 1] <- 2
+PTC$last.deg.pursued.R[PTC$trans.last.college.level == 3 
+                       & PTC$transferred.out == 1] <- 3
+
+PTC$deg.band[PTC$degree.pursued.level.code == 2 
+             & PTC$last.deg.pursued.R == 2] <- 1 #AA1
+PTC$deg.band[PTC$degree.pursued.level.code == 2 
+             & PTC$last.deg.pursued.R == 3] <- 2 #AA2
+PTC$deg.band[PTC$degree.pursued.level.code == 3 
+             & PTC$last.deg.pursued.R == 3] <- 3 #BA1
+PTC$deg.band[PTC$degree.pursued.level.code == 3 
+             & PTC$last.deg.pursued.R == 2] <- 4 #BA2
+PTC$deg.band[PTC$degree.pursued.level.code == 2 
+             & PTC$last.deg.pursued.R == 1] <- 5 #Certfinal
+PTC$deg.band[PTC$degree.pursued.level.code == 3
+             & PTC$last.deg.pursued.R == 1] <- 5 #Certfinal
+
+#Drop the cert final students
+PTC <- PTC[ which(PTC$deg.band < 5), ]
+#Drop the native american students
+PTC <- PTC[ which(PTC$ethnicity.imputed.code < 6), ]
+
 
 #Need to calculate these:                                        
-# trans.last.college.level  to get to this I went back to the NSC data, hmm 
-# last.deg.pursued.R              
-# group     
+
 #delayed.grad
 
 #create the pattern variable (don't know if still necessary)
