@@ -63,4 +63,5 @@ deg.band.desc.all <- rbind(deg.band.desc1*100, deg.band.desc2*100, deg.band.desc
                            deg.band.desc4*100, deg.band.desc5*100, deg.band.desc6*100,  
                            t(deg.band.desc7), t(deg.band.desc8), t(deg.band.desc9),
                            t(deg.band.desc10), t(deg.band.desc11))
-round(deg.band.desc.all,2)
+print(xtable(round(deg.band.desc.all,2)), file = "/Users/andrewwallace/DissertationPublications/deg.band.desc.table.txt")
+save(deg.band.desc.table, file = "/Users/andrewwallace/DissertationPublications/deg.band.desc.table.rda")
