@@ -250,31 +250,41 @@ r.ftpt.list <- grep("^r.ftpt",colnames(PTC))
 PTC$pattern <- apply(PTC[,r.ftpt.list ],1, paste, collapse = "")
 
 
-#descriptives
-PTC$ethnicity.imputed.code <- factor(PTC$ethnicity.imputed.code)
+PTC$ethnicity.imputed.code2 <- factor(PTC$ethnicity.imputed.code, labels = c("White", "Black", "Hispanic", "Asian"))
 PTC$degree.pursued.level.code <- factor(PTC$degree.pursued.level.code, levels = c(3,2))
-#set the appropriate comparison group for degree
 
-PTC$female <- factor(PTC$female)
-
-eth <- table(PTC$ethnicity.imputed.code)
-gender <- table(PTC$female)
-college <- table(PTC$college.id)
-term <- table(entry.date)
-deg <- table(PTC$degree.pursued.level.code)
-
-#a quick test of probits
-#ba.150 was read in as an integer
-#convert it to a factor
-PTC$ba.150 <- factor(PTC$ba.150)
-
-myprobit <- glm(ba.150 ~ ethnicity.imputed.code + degree.pursued.level.code + female, family=binomial(link="probit"), data=PTC)
-
-## model summary
-summary(myprobit)
-
-#well, it runs. 
-a = matrix(c(2, 3, NA,1, NA, 1,2, 12, 19), nrow = 3, ncol = 3, byrow = TRUE)
-df = data.frame(a) 
-lastValue <- function(x) tail(x[!is.na(x)],1)
-
+PTC$deg.band2 <- factor(PTC$deg.band, levels = c(3,4,1,2), labels = c("BA1", "BA2", "AA1", "AA2"))
+PTC$female2 <- factor(PTC$female, labels = c("Male", "Female"))
+PTC$dependent2 <- factor(PTC$dependent, labels = c("Independent", "Dependent"))
+PTC$pell2 <- factor(PTC$pell, labels = c("Not Pell Recipient", "Pell Recipient"))
+PTC$nodelay2 <- factor(PTC$nodelay, labels = c("Delayed Entry", "No Delay in Entry"))
+# 
+# 
+# #descriptives
+# PTC$ethnicity.imputed.code <- factor(PTC$ethnicity.imputed.code)
+# PTC$degree.pursued.level.code <- factor(PTC$degree.pursued.level.code, levels = c(3,2))
+# #set the appropriate comparison group for degree
+# 
+# PTC$female <- factor(PTC$female)
+# 
+# eth <- table(PTC$ethnicity.imputed.code)
+# gender <- table(PTC$female)
+# college <- table(PTC$college.id)
+# term <- table(entry.date)
+# deg <- table(PTC$degree.pursued.level.code)
+# 
+# #a quick test of probits
+# #ba.150 was read in as an integer
+# #convert it to a factor
+# PTC$ba.150 <- factor(PTC$ba.150)
+# 
+# myprobit <- glm(ba.150 ~ ethnicity.imputed.code + degree.pursued.level.code + female, family=binomial(link="probit"), data=PTC)
+# 
+# ## model summary
+# summary(myprobit)
+# 
+# #well, it runs. 
+# a = matrix(c(2, 3, NA,1, NA, 1,2, 12, 19), nrow = 3, ncol = 3, byrow = TRUE)
+# df = data.frame(a) 
+# lastValue <- function(x) tail(x[!is.na(x)],1)
+# 
