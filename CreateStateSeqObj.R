@@ -38,3 +38,12 @@ seqDataAA2 <- seqdef(PTC.AA2, var=c("r.ftptcode.sem1", "r.ftptcode.sem2", "r.ftp
                                     "r.ftptcode.sem13","r.ftptcode.sem14","r.ftptcode.sem15","r.ftptcode.sem16",
                                     "r.ftptcode.sem17","r.ftptcode.sem18","r.ftptcode.sem19","r.ftptcode.sem20"
 ),labels=lablist)
+
+save(seqDataBA1, file = "/Volumes/untitled/PTC.BA1.Seq.RData")
+save(seqDataBA2, file = "/Volumes/untitled/PTC.BA2.Seq.RData")
+save(seqDataAA1, file = "/Volumes/untitled/PTC.AA1.Seq.RData")
+save(seqDataAA2, file = "/Volumes/untitled/PTC.AA2.Seq.RData")
+
+
+
+
