@@ -58,7 +58,9 @@ rownames(deg.band.desc12) <- c("BA1", "BA2", "AA1", "AA2", "Total")
                            t(deg.band.desc10), t(deg.band.desc11), t(deg.band.desc12))
 
 deg.band.desc.table <-   xtable(round(deg.band.desc.all,2), 
-                                align = c("l", "c", "c", "c", "c", "c")
+                                align = c("l", "c", "c", "c", "c", "c"),
+                                caption = "Degree Band Descriptives"
                                 )
-print.xtable(deg.band.desc.table, type = "latex", comment = FALSE, booktabs = TRUE)
+print.xtable(deg.band.desc.table, comment = FALSE, booktabs = TRUE, 
+             caption.placement = "top")
 #save(deg.band.desc.table, file = "/Users/andrewwallace/DissertationPublications/deg.band.desc.table.rda")
