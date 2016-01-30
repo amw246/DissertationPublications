@@ -1,0 +1,8 @@
+\documentclass{article}
+
+\begin{document}
+
+This is the skeleton of the eventual paper. 
+
+
+\end{document}
