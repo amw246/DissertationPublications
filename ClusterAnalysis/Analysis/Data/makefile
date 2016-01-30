@@ -9,7 +9,7 @@ RDIR = .
 MERGE_OUT = MergeData.Rout
 
 # Create list of R source files
-RSOURCE = $(wildcard $(RDIR/*.R)
+RSOURCE = $(wildcard $(RDIR/*.R))
 
 # Files to indicate when the RSOURCE file was run
 OUT_FILES = $(RSOURCE: .R=.Rout)
