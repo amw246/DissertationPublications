@@ -1,0 +1,140 @@
+\documentclass{article}\usepackage[]{graphicx}\usepackage[]{color}
+%% maxwidth is the original width if it is less than linewidth
+%% otherwise use linewidth (to make sure the graphics do not exceed the margin)
+\makeatletter
+\def\maxwidth{ %
+  \ifdim\Gin@nat@width>\linewidth
+    \linewidth
+  \else
+    \Gin@nat@width
+  \fi
+}
+\makeatother
+
+\definecolor{fgcolor}{rgb}{0.345, 0.345, 0.345}
+\newcommand{\hlnum}[1]{\textcolor[rgb]{0.686,0.059,0.569}{#1}}%
+\newcommand{\hlstr}[1]{\textcolor[rgb]{0.192,0.494,0.8}{#1}}%
+\newcommand{\hlcom}[1]{\textcolor[rgb]{0.678,0.584,0.686}{\textit{#1}}}%
+\newcommand{\hlopt}[1]{\textcolor[rgb]{0,0,0}{#1}}%
+\newcommand{\hlstd}[1]{\textcolor[rgb]{0.345,0.345,0.345}{#1}}%
+\newcommand{\hlkwa}[1]{\textcolor[rgb]{0.161,0.373,0.58}{\textbf{#1}}}%
+\newcommand{\hlkwb}[1]{\textcolor[rgb]{0.69,0.353,0.396}{#1}}%
+\newcommand{\hlkwc}[1]{\textcolor[rgb]{0.333,0.667,0.333}{#1}}%
+\newcommand{\hlkwd}[1]{\textcolor[rgb]{0.737,0.353,0.396}{\textbf{#1}}}%
+
+\usepackage{framed}
+\makeatletter
+\newenvironment{kframe}{%
+ \def\at@end@of@kframe{}%
+ \ifinner\ifhmode%
+  \def\at@end@of@kframe{\end{minipage}}%
+  \begin{minipage}{\columnwidth}%
+ \fi\fi%
+ \def\FrameCommand##1{\hskip\@totalleftmargin \hskip-\fboxsep
+ \colorbox{shadecolor}{##1}\hskip-\fboxsep
+     % There is no \\@totalrightmargin, so:
+     \hskip-\linewidth \hskip-\@totalleftmargin \hskip\columnwidth}%
+ \MakeFramed {\advance\hsize-\width
+   \@totalleftmargin\z@ \linewidth\hsize
+   \@setminipage}}%
+ {\par\unskip\endMakeFramed%
+ \at@end@of@kframe}
+\makeatother
+
+\definecolor{shadecolor}{rgb}{.97, .97, .97}
+\definecolor{messagecolor}{rgb}{0, 0, 0}
+\definecolor{warningcolor}{rgb}{1, 0, 1}
+\definecolor{errorcolor}{rgb}{1, 0, 0}
+\newenvironment{knitrout}{}{} % an empty environment to be redefined in TeX
+
+\usepackage{alltt}
+\usepackage{subcaption}
+\usepackage{booktabs}
+% \setkeys{Gin}{width=1\textwidth}
+% \setkeys{Gin}{height=1\textheight}
+\IfFileExists{upquote.sty}{\usepackage{upquote}}{}
+\begin{document}
+
+\begin{table}[ht]
+\centering
+\caption{Degree Band Descriptives} 
+\begin{tabular}{lccccc}
+  \toprule
+ & BA1 & BA2 & AA1 & AA2 & Total \\ 
+  \midrule
+White & 34.49 & 26.33 & 19.67 & 24.38 & 25.18 \\ 
+  Black & 22.38 & 27.41 & 34.78 & 34.71 & 31.08 \\ 
+  Hispanic & 23.56 & 30.87 & 34.82 & 27.43 & 29.72 \\ 
+  Asian & 19.57 & 15.40 & 10.72 & 13.48 & 14.02 \\ 
+  Male & 39.94 & 42.66 & 46.18 & 38.91 & 42.51 \\ 
+  Female & 60.06 & 57.34 & 53.82 & 61.09 & 57.49 \\ 
+  Independent & 6.51 & 6.01 & 30.00 & 20.27 & 19.99 \\ 
+  Dependent & 93.49 & 93.99 & 70.00 & 79.73 & 80.01 \\ 
+  Not Pell Recipient & 49.09 & 43.29 & 43.18 & 41.53 & 44.41 \\ 
+  Pell Recipient & 50.91 & 56.71 & 56.82 & 58.47 & 55.59 \\ 
+  Delayed Entry & 14.76 & 11.65 & 41.61 & 31.79 & 30.48 \\ 
+  No Delay in Entry & 85.24 & 88.35 & 58.39 & 68.21 & 69.52 \\ 
+  Fall & 91.10 & 90.73 & 72.02 & 77.10 & 79.19 \\ 
+  Spring & 8.90 & 9.27 & 27.98 & 22.90 & 20.81 \\ 
+  Age at Entry & 19.28 & 18.97 & 22.44 & 20.94 & 21.07 \\ 
+  College Prep Units & 18.20 & 17.01 & 10.76 & 13.09 & 13.73 \\ 
+  HS GPA & 82.11 & 79.03 & 73.11 & 74.83 & 76.51 \\ 
+  SAT Total before Transformation & 972.54 & 924.15 & 785.34 & 808.33 & 885.54 \\ 
+  First Sem. Credits & 10.46 & 7.65 & 4.55 & 6.96 & 6.89 \\ 
+  First Sem. GPA & 2.64 & 1.91 & 2.06 & 2.58 & 2.36 \\ 
+   \bottomrule
+\end{tabular}
+\end{table}
+
+
+
+
+
+Ok. I finally got this to work. But it involves running the ENTIRE data set up 
+file because objects in the global enviroment are not in the scope of the local
+environment of the knitr R code chunk (unknown if multiple chunks in the same 
+knitr document have the same scope) for reproducibility purposes. This works, but 
+it is EXTREMELY inefficient. The solution may be to save the data to an Rdata file
+and read that. 
+
+Done. It worked SO much faster. , out.extra='angle=90' 
+% 
+% \begin{figure}{t}
+% \centering
+% 
+% <<echo=FALSE, message = FALSE, out.extra='angle=90'>>=
+% library(TraMineR)
+% load("/Volumes/untitled/PTC.BA1.RData")
+% load("/Volumes/untitled/PTC.BA2.RData")
+% load("/Volumes/untitled/PTC.AA1.RData")
+% load("/Volumes/untitled/PTC.AA2.RData")
+% source("/Users/andrewwallace/DissertationPublications/CreateStateSeqObj.R")
+% source("/Users/andrewwallace/DissertationPublications/CreateTopTwentyFiguresBA1.R")
+% @
+%   \caption{Top Twenty Sequences, BA1}
+%   \label{fig:Top20BA1}
+%   \end{figure}
+%   
+% 	\begin{figure}[t]
+%   \centering
+% <<echo=FALSE, message = FALSE>>=
+% library(TraMineR)
+% load("/Volumes/untitled/PTC.BA1.RData")
+% load("/Volumes/untitled/PTC.BA2.RData")
+% load("/Volumes/untitled/PTC.AA1.RData")
+% load("/Volumes/untitled/PTC.AA2.RData")
+% source("/Users/andrewwallace/DissertationPublications/CreateStateSeqObj.R")
+% source("/Users/andrewwallace/DissertationPublications/CreateTopTwentyFiguresBA2.R")
+% @
+% 		\caption{BA2}
+%     \caption{Top Twenty Sequences, BA2}
+% 	\end{figure}
+% 
+% 
+% 
+% \newpage
+% 
+% Why is this not working
+% 
+% 
+\end{document}

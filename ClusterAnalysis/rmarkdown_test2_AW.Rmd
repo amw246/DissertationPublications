@@ -1,0 +1,44 @@
+---
+title: ''
+output: pdf_document
+tables: true
+---
+
+![](/Users/andrewwallace/Documents/PhD/Graphs/20150317_State_Dist_AA1.png)
+
+```{r , echo=FALSE, results = 'asis', message=FALSE} 
+load("/Volumes/untitled/PTC.RData")
+
+source("/Users/andrewwallace/DissertationPublications/DegreeBandDescTable.R")
+ 
+``` 
+ 
+
+Ok. I finally got this to work. But it involves running the ENTIRE data set up 
+file because objects in the global enviroment are not in the scope of the local
+environment of the knitr R code chunk (unknown if multiple chunks in the same 
+knitr document have the same scope) for reproducibility purposes. This works, but 
+it is EXTREMELY inefficient. The solution may be to save the data to an Rdata file
+and read that. 
+
+Done. It worked SO much faster. , out.extra='angle=90'
+
+```{r, echo = FALSE, results = 'asis', message = FALSE}
+library(TraMineR)
+load("/Volumes/untitled/PTC.BA1.RData")
+load("/Volumes/untitled/PTC.BA2.RData")
+load("/Volumes/untitled/PTC.AA1.RData")
+load("/Volumes/untitled/PTC.AA2.RData")
+source("/Users/andrewwallace/DissertationPublications/CreateStateSeqObj.R")
+source("/Users/andrewwallace/DissertationPublications/CreateTopTwentyFiguresBA1.R")
+```
+\newpage
+```{r, echo = FALSE, results = 'asis', message = FALSE}
+library(TraMineR)
+load("/Volumes/untitled/PTC.BA1.RData")
+load("/Volumes/untitled/PTC.BA2.RData")
+load("/Volumes/untitled/PTC.AA1.RData")
+load("/Volumes/untitled/PTC.AA2.RData")
+source("/Users/andrewwallace/DissertationPublications/CreateStateSeqObj.R")
+source("/Users/andrewwallace/DissertationPublications/CreateTopTwentyFiguresBA2.R")
+```

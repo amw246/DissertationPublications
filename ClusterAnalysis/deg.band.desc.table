@@ -1,0 +1,30 @@
+% latex table generated in R 3.1.2 by xtable 1.7-4 package
+% Sat Jan 23 02:15:31 2016
+\begin{table}[ht]
+\centering
+\begin{tabular}{rrrrrr}
+  \hline
+ & BA1 & BA2 & AA1 & AA2 & Total \\ 
+  \hline
+White & 34.49 & 26.33 & 19.67 & 24.38 & 25.18 \\ 
+  Black & 22.38 & 27.41 & 34.78 & 34.71 & 31.08 \\ 
+  Hispanic & 23.56 & 30.87 & 34.82 & 27.43 & 29.72 \\ 
+  Asian & 19.57 & 15.40 & 10.72 & 13.48 & 14.02 \\ 
+  Male & 39.94 & 42.66 & 46.18 & 38.91 & 42.51 \\ 
+  Female & 60.06 & 57.34 & 53.82 & 61.09 & 57.49 \\ 
+  Independent & 6.51 & 6.01 & 30.00 & 20.27 & 19.99 \\ 
+  Dependent & 93.49 & 93.99 & 70.00 & 79.73 & 80.01 \\ 
+  Not Pell Recipient & 49.09 & 43.29 & 43.18 & 41.53 & 44.41 \\ 
+  Pell Recipient & 50.91 & 56.71 & 56.82 & 58.47 & 55.59 \\ 
+  Delayed Entry & 14.76 & 11.65 & 41.61 & 31.79 & 30.48 \\ 
+  No Delay in Entry & 85.24 & 88.35 & 58.39 & 68.21 & 69.52 \\ 
+  Fall & 91.10 & 90.73 & 72.02 & 77.10 & 79.19 \\ 
+  Spring & 8.90 & 9.27 & 27.98 & 22.90 & 20.81 \\ 
+  Age at Entry & 19.28 & 18.97 & 22.44 & 20.94 & 21.07 \\ 
+  College Prep Units & 18.20 & 17.01 & 10.76 & 13.09 & 13.73 \\ 
+  HS GPA & 82.11 & 79.03 & 73.11 & 74.83 & 76.51 \\ 
+  SAT Total before Transformation & 972.54 & 924.15 & 785.34 & 808.33 & 885.54 \\ 
+  First Sem. Credits & 10.46 & 7.65 & 4.55 & 6.96 & 6.89 \\ 
+   \hline
+\end{tabular}
+\end{table}
