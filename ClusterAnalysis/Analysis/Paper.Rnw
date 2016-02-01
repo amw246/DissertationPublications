@@ -1,8 +1,135 @@
 \documentclass{article}
+\bibliographystyle{apalike}
+
+\usepackage{graphicx}
+\usepackage{subcaption}
+\usepackage{rotating}
+\usepackage[round]{natbib} 
+\usepackage{booktabs}
+
+\title{A Typology of Delayed Graduation: Using Sequence Analysis of Enrollment Data to Uncover Heterogeneous Paths to a Degree}
+\author{Andrew Middleton Wallace}
+
+\newcommand{\sa}{Sequence Analysis\xspace}
+\newcommand{\ba}{baccalaureate\xspace}
 
 \begin{document}
+\maketitle
 
-This is the skeleton of the eventual paper. 
+Large proportions of undergraduates in American colleges and universities fail to complete a degree within the “ideal” time frame: two years for an associate degree and four years for a bachelor’s degree. Even when allowing a six-year time frame for graduation, nationwide only 21.6\% of entrants to associate programs and 61.8\% of entrants to baccalaureate programs have finished a degree \citep{NCES2011}. Many policy makers and researchers view these low numbers as indicating serious flaws in our system of higher education, harming both the students involved and our nation’s economic competitiveness \citep{goldin2009race}. Additionally, graduation rates differ between ethnicities, with Black and Hispanic students graduating at lower rates compared to their White and Asian counterparts  \citep{massey2011source}. 
 
+This paper will present an analysis of patterns of enrollment of students who earn a degree, but not “on-time.” For the purposes of this analysis, on-time graduation is defined as earning a certificate or associate degree within eight semesters or a baccalaureate degree within 12 semesters
+
+The way that the university semester system discretizes time means that longitudinal educational data is especially well suited to applications of Sequence Analysis. Sequence Analysis requires that time be measured in ordered, discrete units as opposed to continuously. At each point of measurement in the data under analysis, each subject is in one and only one of the states described below. The data used to create the sequences comprises 20 semesters of enrollment and graduation variables. The total number of observations is 125,515. Each semester is coded as one of the following states:
+
+\begin{enumerate} 
+  \setlength{\itemsep}{0cm}
+  \setlength{\parskip}{0cm}
+  \item Enrolled Full-Time (12 or more credits)
+	\item Enrolled Part-Time (fewer than 12 credits)
+	\item Stopped Out Before a Graduation Outcome
+	\item Transferred Out to a Non-System Institution
+	\item Earned a Certificate Degree
+	\item Earned an Associate Degree
+	\item Earned a Baccalaureate Degree
+	\item Not Enrolled, Post-Graduation
+\end{enumerate}
+
+While there are ways of dealing with missing data in sequences, for the purposes of this analysis it is not a problem. This is because not being enrolled in a given semester is an influential factor in student outcomes, not a source of missingness. Further, there are effectively two types of non-enrollment in this study: expected and unexpected. After a student graduates, we would not expect them to still be enrolled in the university system. Many of the system’s students come back for further education, but for the purposes of this study, those who have received at least one degree are a success. However, students who are not enrolled but have not yet received a degree are unexpectedly not enrolled. 
+
+The Sequence Analysis is completed using the TraMineR package in R \citep{gabadinho2011}. The data set I use for this analysis provides historical, longitudinal data on all first-time freshman, undergraduate students at the system’s campuses. Students who attended another college prior to entering the university system are not included in this data set. The data set includes students who entered between September of 1999 and September 2002. These cohorts were chosen be-cause they are the ones for whom a 10-year window of opportunity to graduate exists in the data. Admittedly, a shorter time frame would allow for more cohorts to be included, but as noted above, students often graduate in a longer time frame than what is considered traditional. A time frame longer than 10 years is not possible at this time due to the constraints of the data set. 
+
+Another important matter in coding the states in a students sequence was how to deal with transfer students and graduation. As noted in the introduction, the National Student Clearinghouse (NSC) does not have as  comprehensive a reporting structure for graduation outcomes as it does for enrollment. Because of this, if I were to use NSC graduation data, I would necessarily be underestimating the number of students who started at CUNY and graduated elsewhere. For this reason, I am coding transfer outcomes in a manner that treats all transfer students in the same way. What I have done is to recode those semesters after a student transfers out of CUNY (and does not come back) as a transfer outcome regardless of whether or not the NSC has data on a student for all of the remaining semesters in the study. For example, if a student is enrolled at CUNY for three semesters, appears in the NSC data in their fourth semester from entry and subsequently never appears at CUNY again, I count them as a transfer. Every semester after their fourth semester is coded as a transfer regardless of whether or not they appear in the NSC data as enrolled. This is a necessary step because the lack of accurate graduation outcomes does not allow me to differentiate expected non-enrollment (after graduation) from non-expected non-enrollment (before graduation). This would cause some students who graduated from a non-NSC-reporting school to be incorrectly clustered with students who dropped out of an NSC-reporting school. This has the side effect of making transfer cumulative in the same way that non-enrollment post-graduation is, affecting its interpretation. That is, the student who transfers out of CUNY in the fourth semester will be counted among the transfers in all subsequent semesters. In the descriptive analysis in the next section, there are figures that show the distribution of states in any given semester. Because of the cumulative nature of some states, higher numbers of stop out, transfer, or non-enrollment post-graduation may indicate an earlier transition to these outcomes instead of a large number of students experiencing that outcome for the first time in a later semester. Higher numbers of full-time or part-time enrollment can indicate a variety of things depending on what the patterns eventual outcome is. If the student dropped out after a high number of full- or part-time enrollment semesters, then this student having a problem finishing, but not a problem maintaining matriculation. If the student graduates after a high number of full- or part-time enrollment semesters, this indicates delayed graduation. A student who transfer after a high number of full- or part-time enrollment semesters could be transferring for a variety of reasons (difficulty finishing, wanting a different college name on her degree, financial issues) that will not be apparent in the data under study.  %\urlstyle{rm}
+
+\section{Degree Bands}
+
+Most research on higher education distinguishes between community college students and baccalaureate students. Of this, there is research that investigates how well community college students who transfer to the baccalaureate level fare compared to either their community college compatriots or to those students who started off as baccalaureate students. Not enough research includes the reverse phenomenon, downward transfer, in its analyses. In order to fully capture the variation in student trajectories through higher education, the type of degree pursued must be measured both at entry and at exit. 
+
+To this end, I separate out these students into degree bands. Those students who ended up at the certificate level (as well as those who started there) are sufficiently few and outside of the analytic scope of this study that I am excluding them from analysis. Associate and baccalaureate degree attainment are the main focus of this analysis. The final analytic sample is separated into degree bands based on initial and final degrees sought. This allows me to include a more complete set of possible degree paths in the analysis. The degree bands used in this analysis are as follows:
+
+\begin{enumerate} 
+  \setlength{\itemsep}{0cm}
+  \setlength{\parskip}{0cm}
+  \item Baccalaureate at entry to and exit from the system (BA1)
+  \item Baccalaureate at entry to and Associate at exit from the system (BA2) 
+  \item Associate at entry to and exit from the system (AA1)
+  \item Associate at entry to and Baccalaureate at exit from the system (AA2) 
+\end{enumerate} 
+
+As noted above, the total number of observations in the data set is 125,515. Of these, 69.01\% entered the system initially seeking an associate degree. 30.99\% initially sought a baccalaureate degree in the system. Of those who initially sought an associate degree, 63.66\% were still pursuing an associate degree upon departure from the system, regardless of whether that departure was due to graduation, drop out, or transfer. 36.34\% initially associate-seeking students transferred up to the baccalaureate level by the time of their departure from the system. Of those who initially sought a baccalaureate degree, 89.51\% were still pursing a baccalaureate degree upon departure from the system and 10.49\% transferred down to the associate level. 
+
+\section{Describing the Patterns}
+
+Figure 1.1 shows that for initially baccalaureate students who stay at the baccalaureate level, the most common pattern is 7 semesters of full-time enrollment, followed by a semester in which they receive their baccalaureate degree. This pattern is followed by 10.4\% of the BA1 population (3,618 students). 9 of the top 20 patterns for this degree band involve graduation. Further, all of those graduation patterns involve graduation within 6 years. Another 4 patterns in the top 20 involve transfer (the yellow blocks). Finally, there are 7 patterns in the top 20 that do not involve graduation or a transfer outcome. These are students who have dropped out of the higher education system during the window of analysis. The orange blocks represent semesters of non-enrollment before receiving some sort of degree. The reader will also note that there are two patterns that involve part-time enrollment (lavender). This type of enrollment is not very prevalent among the top 20 patterns for BA1 students. 
+
+The top twenty patterns for the other degree bands told a rather different story. They are omitted for space considerations but will be included in the final paper. 
+
+As interesting as they are, the top 20 patterns for a degree band do not tell the whole story. The top 20 patterns for BA1, BA2, AA1, and AA2 only represent 44.52\%, 12.75\%, 42.56\%, and 13.23\% of their respective degree bands. These percentages indicate that students who stay at the degree level they started at are a lot more homogeneous than those who change level. This is evident from the fact that the top 20 patterns of those who stayed at the level they started at represent almost 45\% and 43\% of the students at the baccalaureate and associate levels respectively. On the other hand, of those who changed level, only around 13\% of the students are represented by the top 20 patterns, regardless of starting level. The absolute number of students represented by these top 20 patterns is also worthy of note. For those who stayed at the same level that they started at, 15,516 and 23,520 students followed the top 20 baccalaureate and associate patterns respectively. For those who changed levels, 521 and 4,167 students are represented by the top 20 initially-baccalaureate and initially-associate patterns respectively. The cluster analysis presented later in this paper will explore more of the variation in these subgroups. 
+
+It is important to note that, while there are generally accepted techniques for doing a cluster analysis, a certain amount of subjectivity is involved with a cluster analysis because of the necessity of choosing one algorithm over another. Further, the choice of a final number of clusters is ultimately based on theory and interpretability as much as it is upon any objective measure of cluster quality. Cluster analysis of sequence data requires that a matrix of distances be calculated to tell the researcher how close (by whatever measure) any two sequences are. The distance measure chosen for this analysis is the Optimal Matching distance as implemented by TraMineR. There is no consensus in the literature as to the single best way to weight the substitution, insertions, and deletions, but it is generally acknowledged that theory should be a guiding force in any weighting schema (Abbott and Tsay 2000; Gauthier et al., 2009; Lesnard, 2010). I chose to base the substitution cost on transition rates in order to have the difficulty of exchanging one state for another at any given time point be tied into how often this transition occurs from one time point to another. While this makes the weights less generalizable because the clusters are more dependent on the transitions that occur in this particular data set, I argue that the benefit of not artificially imposing a substitution cost based on intuition outweighs the chance that the transitions occurring in this rather large data set are systematically different than those that might occur with a different data set. 
+
+Once a distance matrix is calculated, a clustering algorithm needs to be chosen. In this analysis, I use Ward’s method to cluster patterns because of its wide usage (Murtagh and Legendre, 2014). While the cluster quality measures produced by TraMineR suggested a two or three cluster solution, these clusters were not very informative and were certainly not policy-relevant. In order to find more interesting patterns, I look at larger numbers of clusters to see what groups would emerge from the data. In these clusters, I found some interesting patterns of degree completion, transfer, and dropping out. Looking at the various cluster solutions, I arrived at the following set of cluster solutions as the best balance of interpretability and sample size. That is, I looked at representative sequences from each possible cluster solution (up to 20 clusters) and interpreted the story of the members of that cluster based on the representative sequences. Table 1.1 shows the number of clusters chosen for each degree band. Different numbers of cluster solutions were chosen for each degree band because the different degree bands had differing amounts of heterogeneity and with some of the degree bands (AA1 in particular), it took a higher number of clusters for interesting sequences to separate out from the larger clusters present in cluster solutions with fewer numbers of clusters. 
+
+\begin{table}[htb]
+\centering
+\caption{Final Number of Clusters Chosen}
+\label{tab:tabDegBandClust}
+\input{/Volumes/untitled/DegBandClusterNumbers.tex}
+\end{table}
+
+The subfigures in Figure 1.2 show the ten representative sequences chosen by TraMineR to represent the ten clusters for the BA1 degree band in which graduation was the defining outcome. The cluster solutions included other outcomes such as transfer and drop out, but these are omitted as the focus of this analysis is graduation. Further, the graduation clusters for the other degree bands are also omitted for brevity. Unlike the top ten sequences in figure 1.1, the height of the representative sequences is proportional to how many students in the cluster followed a given sequence. The color scheme for this figure is the same as is figure 1.1
+
+Each subfigure within the larger figure represents a cluster that I have named based on the sequences presented. For example, in one cluster of BA1 students, the top ten sequences that TraMineR chose to represent this cluster all involved earning a baccalaureate degree by the sixth year from entry. As this was the characteristic that seemed to differentiate this cluster from the others, I labeled this cluster “On-time Graduates.” Figure 1.1(a) shows the top ten representative sequences for this cluster. 
+
+I have arranged the clusters in the overall figure in order of how long it took the students to reach the graduation outcome. We can see that the biggest difference between (a) and (b) is how long it took the students to get there (4-6 years instead of 6-7 years). Otherwise they are both characterized by mostly full-time attendance (green) with some part-time attendance (lavender) and some stop out (orange). The clusters represented by subfigures (c) and (d) both represent graduation outcomes that occur somewhere in the 6-8 year range. But they are differentiated from each other by how the students got to this outcome in that time frame. Students in subfigure (c) got there with a break that lasted 3-6 semesters and graduated immediately upon returning to the system. Students represented by subfigure (d) had a significant amount of part-time attendance on their way to graduation. This represents a difference in manner in which students achieved their outcome, not simply in the duration as we saw between (a) and (b). Subfigure (e) represents students who stopped out relatively early (within 2.5 years) and took a long break (2 - 6.5 years) before coming back to finish their degree. 
+
+\section{Implications of the Cluster Solution}
+
+The clusters indicated by the analysis outlined here have a number of potential implications both for our understanding of graduation and for what policies might be implemented to improve student outcomes. 
+
+That there are students who take longer than what is traditional to graduate is not surprising given the previous work done in this area. However, I was expecting that there would be a larger variety of differences in how students got to their delayed graduation than was found in the analysis. I expected that there might be students who came in and out of the higher education system, taking breaks in order to work or for some other reason. However, I found in general that students who took more than six years to graduate did so because they were part-time for a large portion of their career in the university system or they took a multi-semester break, after which they returned and finished the degree. 
+
+This second group of delayed graduates is potentially interesting from a policy standpoint because the difference between them and a dropout is that they came back. This implies that further work can be done to explore the systematic differences between dropouts and those students who succeed despite an absence from higher education.  
+
+The cluster solution for the BA1 degree band along with those for the other degree bands support the typology of delayed graduation that I am proposing:
+\begin{enumerate} 
+  \setlength{\itemsep}{0cm}
+  \setlength{\parskip}{0cm}
+  \item Those who have no delay (Figure 1.1a)
+  \item Those who have a short delay (Figure 1.1b)
+	\item Those who have a medium delay with a gap (Figure 1.1c)
+	\item Those who have a medium delay with part-time enrollment (Figure 1.1d)
+	\item Those who have a long delay with a long break (Figure 1.1e)
+\end{enumerate}
+
+Variations on this typology for other degree bands will be presented in the full paper.
+
+
+
+ \begin{sidewaysfigure}
+\includegraphics[width=\textwidth,height=\textheight,keepaspectratio]
+{"/Users/andrewwallace/DissertationPublications/ClusterAnalysis/Analysis/Figures/Top20BA1"}
+ \end{sidewaysfigure}
+
+
+
+ \begin{sidewaysfigure}
+\includegraphics[width=\textwidth,height=\textheight,keepaspectratio]
+{"/Users/andrewwallace/DissertationPublications/ClusterAnalysis/Analysis/Figures/Top20BA2"}
+ \end{sidewaysfigure}
+
+
+ \begin{sidewaysfigure}
+\includegraphics[width=\textwidth,height=\textheight,keepaspectratio]
+{"/Users/andrewwallace/DissertationPublications/ClusterAnalysis/Analysis/Figures/Top20AA1"}
+ \end{sidewaysfigure}
+
+
+ \begin{sidewaysfigure}
+\includegraphics[width=\textwidth,height=\textheight,keepaspectratio]
+{"/Users/andrewwallace/DissertationPublications/ClusterAnalysis/Analysis/Figures/Top20AA2"}
+ \end{sidewaysfigure}
+
+ \bibliography{ClusterArticleBiblio.bib}
 
 \end{document}

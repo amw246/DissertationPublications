@@ -102,4 +102,8 @@ the analysis that aren't in the data set currently.
 
 ### Bring data into R and QA to make sure it worked
 
+I was able with Paki's help to bring the state recoding into R. I also created a variable to examine the difference between the two versions of state recoding variables and found no difference. 
+
 ### Recreate analyses in R
+
+I've been running into a number of issues with recreating the analyses in R, not the least of which is that I'm also attempting to incorporate a reproducible research workflow into the mix. I think this will work out well in the end, even if it is causing pain in the short term. I like how much it has made me think systematically about organizing my files and how to make them more modular. It's not entirely clear to me the place of makefiles in the workflow outlined by Grandrud. It looks like they are only for the data munging part of the workflow. I don't see why we wouldn't want to control the whole workflow through the makefile. Regardless, even if I restrict the makefile to munging tasks in general, I think I might use it for some of the figure creation since it is a LOT easier to work with finished png files than it is to try to get sweave to output the files as I would like. Maybe in the future I will be able to incorporate this step into the analysis files instead of the data munging files (although I don't know if there is any actual advantage to this). 

@@ -89,7 +89,14 @@ NSC[NSC == ""] <- NA
 NSC[NSC == "L"] <- NA
 #The apply in lastValue doesn't seem to like it if there is no initial value, 
 # so I'm bringing in their last deg pursued from the PTC. I need to be careful not to 
-# overwrite later in-CUNY changes with this . 
+# overwrite later in-CUNY changes with this .
+deg.pursued1 <- names(PTC)[which(colnames(PTC)=="degree.pursued.level.code")] 
+deg.pursued2 <- names(PTC)[which(colnames(PTC)=="degree.pursued.lvl.code.sem02"):
+                             which(colnames(PTC)=="degree.pursued.lvl.code.sem20")]
+deg.pursued <- c(deg.pursued1, deg.pursued2)
+lastValue <- function(x) tail(x[!is.na(x)],1)
+PTC$last.deg.pursued <- apply(PTC[deg.pursued], 1, lastValue)
+
 PTC.Level <- PTC[,c("oira.student.id", "last.deg.pursued")]
 NSC <- merge(PTC.Level, NSC , by="oira.student.id")
 NSC$trans.last.college.level <- apply(NSC[, 2:103], 1, lastValue)

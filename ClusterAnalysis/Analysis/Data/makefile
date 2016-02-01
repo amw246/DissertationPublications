@@ -28,3 +28,13 @@ clean:
 # Remove MergeData.Rout
 cleanMerge:
 	rm -fv $(MERGE_OUT)
+	
+	
+# The correct order is 
+# GatherData
+# CodeStateVars
+# PruneSample
+# DefineFactors
+# SaveData
+# CreateStateSeqObj
+# CreateTopTwentyFigures
