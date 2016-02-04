@@ -1,0 +1,39 @@
+---
+title: "Sequence Analysis Steps"
+author: "Andrew Wallace"
+date: "January 31, 2016"
+output: html_document
+---
+
+This document will outline the steps necessary to complete a Sequence Analysis of the type done in my dissertation. It's purpose is to help keep clear in my mind all of the steps and dependencies in the process to allow for better modularization of the syntax.
+
+The steps are as follows:
+
++ Gather your data
+    + `GatherData.R`
++ Create a series of state variables for TraMineR to analyze
+    + `CodeStateVars.R`
++ Create a state sequence object that contains those variables
+    + `CreateStateSeqObj.R`
++ Run Descriptives
+    + Top Twenty Patterns 
+        + `CreateTopTwentyFigures.R`
+    + State Distribution
+    + Mean Time in State
+    + Transition rate tables
+    + Transversal Entropy Plots?
++ Calculate Substitution Cost Matrices
+    + `CreateSubCostMats.R`
++ Create weighted data set to lessen computational complexity
+    + `CreateWeightedDataSets.R`
++ Create state sequence objects for the weighted data sets and cluster the sequences
+    + `CreateClusters.R`
++ Create sequence trees
++ Try alternative Clustering algorithms
++ Create representative sequence figures
+    + Create a variable identifying cluster membership
+    + Bridge it back to the unweighted data set
+    + Create subsets of the unweighted data set by cluster
+    + Define another sequence object on the subset
+    + Create sequence distance object on subset
+    + Create representative sequence plot
